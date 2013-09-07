@@ -12,5 +12,6 @@ public class Constants {
             SCOPE_LOGIN + " " + SCOPE_EMAIL;
 
 
-    public static final String SP_CODE = "wheresthecode";
+    public static final String SP_CODE  = "wheresthecode";
+    public static final String HAND_FRAG= "fragmentHandler";
 }
