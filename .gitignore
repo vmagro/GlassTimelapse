@@ -1,1 +1,3 @@
 Glass/bin/*
+/bin
+.DS_Store
