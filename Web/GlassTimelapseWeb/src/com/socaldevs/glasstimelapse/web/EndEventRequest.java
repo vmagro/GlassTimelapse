@@ -16,7 +16,7 @@ public class EndEventRequest {
 
 	public String gPlusId;
 	public Long eventId;
-	public String accessToken;
+	public String refreshToken;
 	public List<String> images;
 
 	public EndEventRequest(Event e) {
@@ -24,7 +24,7 @@ public class EndEventRequest {
 
 		User user = e.getUser();
 		this.gPlusId = user.googleUserId;
-		this.accessToken = user.googleAccessToken;
+		this.refreshToken = user.googleRefreshToken;
 
 		this.images = new ArrayList<String>();
 		System.out.println(this.eventId);
