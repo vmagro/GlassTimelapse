@@ -41,13 +41,12 @@ public class SignInFragment extends SherlockFragment implements GooglePlayServic
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_signin, container, false);
-
+        Log.i(TAG, "In SignInFragment");
         sp = getSherlockActivity().getPreferences(getActivity().MODE_PRIVATE);
         mPlusClient = new PlusClient.Builder(getSherlockActivity(), this, this)
                 .setScopes(Constants.SCOPE_EMAIL,
                         Constants.SCOPE_LOGIN)
                 .build();
-
 
         //Progress bar to be displayed if the connection failure is not resolved.
         mConnectionProgressDialog = new ProgressDialog(getSherlockActivity());
@@ -56,13 +55,11 @@ public class SignInFragment extends SherlockFragment implements GooglePlayServic
 
         //If we already have an access code, lets just keep on going, they don't need to
         //authenticate again.
-        if(!sp.getString(Constants.SP_CODE, "").equals("")){
+        if(sp.contains(Constants.SP_CODE)){
             Log.i(TAG, "We have a code, we will just go through the google plus client connection");
             mPlusClient.connect();
             mConnectionProgressDialog.show();
         }
-        else
-        Log.i(TAG, "Code is currently: " + sp.getString(Constants.SP_CODE, ""));
         return rootView;
     }
 
@@ -105,7 +102,7 @@ public class SignInFragment extends SherlockFragment implements GooglePlayServic
         //We've resolved any connection errors.
         String user = mPlusClient.getAccountName();
         Log.i(TAG, "Connected: " + user);
-        connectToServer.execute("");
+        connectToServer.execute(String.valueOf(System.currentTimeMillis()));
     }
 
     //What do we do when the user disconnects our service? We Cry.
@@ -164,8 +161,6 @@ public class SignInFragment extends SherlockFragment implements GooglePlayServic
                 if(!code.equals(sp.getString(Constants.SP_CODE, ""))){
                     Log.i(TAG, "Code given by server was different from last time");
                     sp.edit().putString(Constants.SP_CODE, code).commit();
-                    if(code.equals(sp.getString(Constants.SP_CODE, "")))
-                        Log.i(TAG, "The codes are the same.");
                 }
 
             } catch (IOException transientEx) {
@@ -199,11 +194,13 @@ public class SignInFragment extends SherlockFragment implements GooglePlayServic
         protected void onPostExecute(Void result) {
             //We want to switch back to the news fragment
             mConnectionProgressDialog.dismiss();
+            getSherlockActivity().sendBroadcast(new Intent(Constants.INTENT_UNLOCK_ID));
             switchToNewsFeed();
         }
     };
 
     private void switchToNewsFeed(){
+        Log.i(TAG, "Switching to News Feed");
         if(!sp.getString(Constants.SP_CODE, "").equals(""))
             getSherlockActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.frame_main, new NewsFeedFragment()).commit();

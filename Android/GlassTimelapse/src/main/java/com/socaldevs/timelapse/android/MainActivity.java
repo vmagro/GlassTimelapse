@@ -1,12 +1,15 @@
 package com.socaldevs.timelapse.android;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -27,12 +30,12 @@ public class MainActivity extends SherlockFragmentActivity{
 
     private SharedPreferences sp;
     private final String TAG = "I HATE SHIT THAT DOESN'T WORK";
-    private FragmentManager fragmentManager;
     private SherlockFragment currentFragment;
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private String[] navDrawerListItems;
     private ActionBarDrawerToggle mDrawerToggle;
+    private UpdateReceiver mUpdateReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,12 +48,14 @@ public class MainActivity extends SherlockFragmentActivity{
         mDrawerList         = (ListView) findViewById(R.id.left_drawer);
         mDrawerList.setBackgroundColor(getResources().getColor(R.color.vintage_orange));
         navDrawerListItems  = getResources().getStringArray(R.array.navigation_items);
-        fragmentManager     = getSupportFragmentManager();
         currentFragment     = new SignInFragment();
-
-        //Finally we get to the normal Fragment Transaction stuff
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.frame_main, currentFragment).commit();
+        //We want to lock the drawer while in the sign-in page. Once they are out of it, we will
+        //unlock it via sending off an intent.
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-            selectItem(42);
+
+
         /* Here is all of the Drawer Shit.... */
         // Set the adapter for the list view
         mDrawerList.setAdapter(new ArrayAdapter<String>(this,
@@ -79,8 +84,17 @@ public class MainActivity extends SherlockFragmentActivity{
         // Set the drawer toggle as the DrawerListener
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+        //Will receive an intent when we want to unlock the drawer and show the up icons
+        mUpdateReceiver = new UpdateReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setHomeButtonEnabled(true);
+            }
+        };
+        registerReceiver(mUpdateReceiver,
+                new IntentFilter(Constants.INTENT_UNLOCK_ID));
     }
 
     @Override
@@ -105,7 +119,7 @@ public class MainActivity extends SherlockFragmentActivity{
 /** Swaps fragments in the main content view */
     public void selectItem(int position) {
         // Insert the fragment by replacing any existing fragment
-
+        Log.i(TAG, "Switching to fragment: " + position);
         switch(position){
             case 0:
                 currentFragment = new NewsFeedFragment();
@@ -164,5 +178,22 @@ public class MainActivity extends SherlockFragmentActivity{
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        unregisterReceiver(mUpdateReceiver);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        registerReceiver(mUpdateReceiver, new IntentFilter(Constants.INTENT_UNLOCK_ID));
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 }
