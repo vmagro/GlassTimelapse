@@ -1,6 +1,10 @@
 package com.socaldevs.timelapse.glass;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,7 +15,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -30,6 +33,10 @@ public class MainActivity extends Activity {
 	private CameraPreview mPreview;
 
 	private WakeLock wakeLock = null;
+	
+	private File dir = new File("/sdcard/timelapse");
+	private DecimalFormat formatter = new DecimalFormat("00000");
+	private static int picNum = 0;
 
 	private PictureCallback mPicture = new PictureCallback() {
 
@@ -37,6 +44,16 @@ public class MainActivity extends Activity {
 		public void onPictureTaken(byte[] data, Camera camera) {
 			Log.i("status", "picture taken");
 			Log.i("length", "" + data.length);
+			
+			File out = new File(dir, "lapse_1_img"+formatter.format(picNum)+".jpg");
+			picNum++;
+			FileOutputStream fos;
+			try {
+				fos = new FileOutputStream(out);
+				fos.write(data);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	};
 
@@ -46,6 +63,10 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 
 		handler = new Handler();
+		
+		dir.mkdirs();
+		
+//		Log.i("autofocus support", String.valueOf(getPackageManager().hasSystemFeature("android.hardware.camera.autofocus")));
 	}
 
 	@Override
