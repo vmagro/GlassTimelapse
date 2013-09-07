@@ -1,6 +1,9 @@
 package com.socaldevs.timelapse.glass;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.List;
 
 import android.app.Activity;
@@ -14,6 +17,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.provider.Settings.Secure;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -34,13 +38,12 @@ public class MainActivity extends Activity {
 
 	private WakeLock wakeLock = null;
 
-	// private File dir = new File("/sdcard/timelapse");
-	// private DecimalFormat formatter = new DecimalFormat("00000");
-	// private static int picNum = 0;
+	 private File dir = new File("/sdcard/timelapse");
+	 private DecimalFormat formatter = new DecimalFormat("00000");
 
 	private LocationManager locationManager = null;
 	private String locationProvider = null;
-	
+
 	private int picIndex = 0;
 
 	private PictureCallback mPicture = new PictureCallback() {
@@ -52,20 +55,19 @@ public class MainActivity extends Activity {
 			Log.i("exposure", ""
 					+ camera.getParameters().getExposureCompensation());
 
-			// File out = new File(dir,
-			// "lapse_1_img"+formatter.format(picNum)+".jpg");
-			// File out = new File(dir, "single.jpg");
-			// picNum++;
-			// FileOutputStream fos;
-			// try {
-			// fos = new FileOutputStream(out);
-			// fos.write(data);
-			// } catch (IOException e) {
-			// e.printStackTrace();
-			// }
+			File out = new File(dir, "lapse_1_img" + formatter.format(picIndex)
+					+ ".jpg");
+//			File out = new File(dir, "single.jpg");
+			FileOutputStream fos;
+			try {
+				fos = new FileOutputStream(out);
+				fos.write(data);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 
-			Uploader uploader = new Uploader(picIndex);
-			uploader.execute(data);
+			// Uploader uploader = new Uploader(picIndex);
+			// uploader.execute(data);
 			picIndex++;
 		}
 	};
@@ -84,6 +86,8 @@ public class MainActivity extends Activity {
 
 		// Log.i("autofocus support",
 		// String.valueOf(getPackageManager().hasSystemFeature("android.hardware.camera.autofocus")));
+
+		Log.i("uuid", Secure.getString(getContentResolver(), Secure.ANDROID_ID));
 	}
 
 	@Override
@@ -100,6 +104,11 @@ public class MainActivity extends Activity {
 		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 		wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK,
 				"Glass Timelapse");
+		
+		if(mCamera == null){
+			Log.e("camera", "camera is null!!!!!!");
+			System.exit(0);
+		}
 
 		Camera.Parameters params = mCamera.getParameters();
 
