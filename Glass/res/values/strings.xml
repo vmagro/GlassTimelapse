@@ -2,7 +2,10 @@
 <resources>
 
     <string name="app_name">GlassTimelapse</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_start">Start</string>
     <string name="hello_world">Hello world!</string>
+    <string name="action_stop">Stop</string>
+    <string name="action_take_picture">Take Picture</string>
+    <string name="main">Welcome to GlassTimelapse\nTap for controls</string>
 
 </resources>
