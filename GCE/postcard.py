@@ -1,6 +1,7 @@
-from flask import  Flask, request
+from flask import  Flask, request, jsonify
 #import vidmaker
 import datetime
+import json
 import base64
 app = Flask(__name__, static_url_path='')
 
@@ -11,22 +12,20 @@ def root():
 @app.route('/create', methods=['POST','GET'])
 def create():
 	if request.method == 'POST':
-		data = request.data
-		#token = request.form['accessToken']
-		#eventid = request.form['eventId']
-		#userid = request.form['gPlusId']
-		#image_array = request.form['images']
-		#imgindex=0
-		#for image in image_array:
-	#		f = open('glass'+imgindex+'.jpg', 'w')
-#			f.write(base64.decodestring(image))
-	#		f.close()		
-		#vid_dir = '/static/'+userid+'/'+datetime.datetime.now()
-		#os.mkdir(vid_dir)
-		#upack files from post request
+		jdata = json.loads(request.data) 
+		token = jdata['accessToken']
+		eventid = jdata['eventId']
+		userid =jdata['gPlusId']
+		image_array = jdata['images']
+		imgindex=0
+		for image in image_array:
+			f = open('glass'+imgindex+'.jpg', 'w')
+			f.write(base64.decodestring(image))
+			f.close()		
+		vid_dir = '/static/'+userid+'/'+eventid
+		os.mkdir(vid_dir)
 		#vidmaker.process(vid_dir, token, userid)
-	#	return 'Success'+eventid
-		return data
+		return 'Success '+str(eventid)
 	else:
 		return 'What did the fox say?'
 
