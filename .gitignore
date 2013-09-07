@@ -1,3 +1,5 @@
+Glass/bin/*
+Glass/gen/*
 /bin
 .DS_Store
 
