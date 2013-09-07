@@ -11,6 +11,22 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 	}
+	/**
+     	* Handle the tap event from the touchpad.
+     	*/
+    	@Override
+    	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	        switch (keyCode) {
+            	// On Tap, we want to open the menus
+            	case KeyEvent.KEYCODE_DPAD_CENTER:
+            	case KeyEvent.KEYCODE_ENTER:
+	                openOptionsMenu();
+                	return true;
+            	default:
+		        return super.onKeyDown(keyCode, event);
+	        }
+    	}
+
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
