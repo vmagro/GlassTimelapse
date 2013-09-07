@@ -4,11 +4,11 @@ Glass/gen/*
 .DS_Store
 
 # boilerplate generated classes #
-.apt_generated/
+Web/GlassTimelapseWeb/.apt_generated/
 
 # more caches and things from deploy #
-war/WEB-INF/deploy/
-war/WEB-INF/classes/
+Web/GlassTimelapseWeb/war/WEB-INF/deploy/*
+Web/GlassTimelapseWeb/war/WEB-INF/classes/*
 
 # App engine generated #
-war/WEB-INF/appengine-generated/
+Web/GlassTimelapseWeb/war/WEB-INF/appengine-generated/*
