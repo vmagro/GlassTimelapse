@@ -11,6 +11,8 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
@@ -37,6 +39,9 @@ public class MainActivity extends Activity {
 	private File dir = new File("/sdcard/timelapse");
 	private DecimalFormat formatter = new DecimalFormat("00000");
 	private static int picNum = 0;
+	
+	private LocationManager locationManager = null;
+	private String locationProvider = null;
 
 	private PictureCallback mPicture = new PictureCallback() {
 
@@ -44,8 +49,10 @@ public class MainActivity extends Activity {
 		public void onPictureTaken(byte[] data, Camera camera) {
 			Log.i("status", "picture taken");
 			Log.i("length", "" + data.length);
+			Log.i("exposure", ""+camera.getParameters().getExposureCompensation());
 			
-			File out = new File(dir, "single.jpg");//"lapse_1_img"+formatter.format(picNum)+".jpg");
+			File out = new File(dir, "lapse_1_img"+formatter.format(picNum)+".jpg");
+//			File out = new File(dir, "single.jpg");
 			picNum++;
 			FileOutputStream fos;
 			try {
@@ -66,6 +73,8 @@ public class MainActivity extends Activity {
 		
 		dir.mkdirs();
 		
+		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		locationProvider = locationManager.getProviders(true).get(0);
 		
 //		Log.i("autofocus support", String.valueOf(getPackageManager().hasSystemFeature("android.hardware.camera.autofocus")));
 	}
@@ -87,8 +96,11 @@ public class MainActivity extends Activity {
 		
 		Camera.Parameters params = mCamera.getParameters();
 		
-		List<String> focusModes = params.getSupportedFocusModes();
 		params.setPictureSize(1280, 720);
+		
+		
+		List<String> focusModes = params.getSupportedFocusModes();
+		
 		for(String s : focusModes){
 			Log.i("supported focus mode", s);
 		}
@@ -99,9 +111,12 @@ public class MainActivity extends Activity {
 		
 		params.setExposureCompensation(-30);
 		
+		params.setSceneMode(Camera.Parameters.SCENE_MODE_STEADYPHOTO);
+		
 		mCamera.setParameters(params);
 		
 		Log.i("exposure compensation", ""+mCamera.getParameters().getExposureCompensation());
+		Log.i("scene mode", ""+mCamera.getParameters().getSceneMode());
 	}
 
 	@Override
@@ -166,6 +181,11 @@ public class MainActivity extends Activity {
 			Log.e("cam status", "camera is null");
 			return;
 		}
+		Camera.Parameters params = mCamera.getParameters();
+		Location loc = locationManager.getLastKnownLocation(locationProvider);
+		params.setGpsLatitude(loc.getLatitude());
+		params.setGpsLongitude(loc.getLongitude());
+		mCamera.setParameters(params);
 		mCamera.takePicture(null, null, mPicture);
 		Log.i("status", "called takePicture");
 	}
