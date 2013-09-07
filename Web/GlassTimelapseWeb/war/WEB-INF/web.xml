@@ -15,6 +15,14 @@
 		<servlet-name>EventServlet</servlet-name>
 		<servlet-class>com.socaldevs.glasstimelapse.web.servlets.EventServlet</servlet-class>
 	</servlet>
+	<servlet-mapping>
+		<servlet-name>UploadServlet</servlet-name>
+		<url-pattern>/upload</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>UploadServlet</servlet-name>
+		<servlet-class>com.socaldevs.glasstimelapse.web.servlets.UploadServlet</servlet-class>
+	</servlet>
 	<servlet>
 	  <servlet-name>StartupServlet</servlet-name>
 	  <servlet-class>com.socaldevs.glasstimelapse.web.servlets.StartupServlet</servlet-class>

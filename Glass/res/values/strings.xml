@@ -6,6 +6,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_stop">Stop</string>
     <string name="action_take_picture">Take Picture</string>
-    <string name="main">Welcome to GlassTimelapse\nTap for controls</string>
+    <string name="main">Tap for controls</string>
 
 </resources>
