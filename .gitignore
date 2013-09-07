@@ -1,2 +1,12 @@
 /bin
 .DS_Store
+
+# boilerplate generated classes #
+.apt_generated/
+
+# more caches and things from deploy #
+war/WEB-INF/deploy/
+war/WEB-INF/classes/
+
+# App engine generated #
+war/WEB-INF/appengine-generated/

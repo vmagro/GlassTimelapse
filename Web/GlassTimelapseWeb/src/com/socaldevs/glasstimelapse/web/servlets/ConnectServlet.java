@@ -49,6 +49,7 @@ public class ConnectServlet extends JsonRestServlet {
 		try {
 			// read the token
 			accessToken = Jsonifiable.fromJson(req.getReader(), TokenData.class);
+			System.out.println("at:" + accessToken);
 		} catch (IOException e) {
 			sendError(resp, 400, "Unable to read auth result from request body");
 		}
@@ -207,10 +208,7 @@ public class ConnectServlet extends JsonRestServlet {
 		// TODO(silvano): Also fetch and set the email address for the user.
 		user.setGoogleAccessToken(credential.getAccessToken());
 		if (credential.getRefreshToken() != null) {
-			System.out.println("RefreshToken is not null");
 			user.setGoogleRefreshToken(credential.getRefreshToken());
-		} else {
-			System.out.println("RefreshToken is null");
 		}
 		user.setGoogleExpiresAt(credential.getExpirationTimeMilliseconds());
 		user.setGoogleExpiresIn(credential.getExpiresInSeconds());
