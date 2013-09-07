@@ -14,7 +14,7 @@ def root():
 def create():
 	if request.method == 'POST':
 		jdata = json.loads(request.data) 
-		token = jdata['accessToken']
+		token = jdata['refreshToken']
 		eventid = jdata['eventId']
 		userid =jdata['gPlusId']
 		image_array = jdata['images']		
@@ -29,7 +29,7 @@ def create():
                         f.write(base64.decodestring(image))
                         f.close()
 			imageindex=imageindex+1
-		vidmaker.process(vid_dir, token, userid)
+		vidmaker.process(vid_dir, userid, token, eventid)
 		return 'Success '+str(eventid)
 	else:
 		return 'What did the fox say?'
