@@ -184,16 +184,22 @@ public class ConnectServlet extends JsonRestServlet {
 		if (user == null) {
 			// Register a new user. Collect their Google profile info first.
 			Plus plus = new Plus.Builder(TRANSPORT, JSON_FACTORY, credential).build();
+			Oauth2 oauth2 = new Oauth2.Builder(TRANSPORT, JSON_FACTORY, credential).build();
 			Person profile;
 			Plus.People.Get get;
+			String email;
 			try {
 				get = plus.people().get("me");
 				profile = get.execute();
+				email = oauth2.userinfo().get().execute().getEmail();
+				System.out.println("Email: " + email);
 			} catch (IOException e) {
 				throw new GoogleApiException(e.getMessage());
 			}
 			user = new User();
 			user.setGoogleUserId(profile.getId());
+			user.setName(profile.getDisplayName());
+			user.setEmail(email);
 			user.setGoogleDisplayName(profile.getDisplayName());
 			user.setGooglePublicProfileUrl(profile.getUrl());
 			user.setGooglePublicProfilePhotoUrl(profile.getImage().getUrl());
@@ -201,7 +207,10 @@ public class ConnectServlet extends JsonRestServlet {
 		// TODO(silvano): Also fetch and set the email address for the user.
 		user.setGoogleAccessToken(credential.getAccessToken());
 		if (credential.getRefreshToken() != null) {
+			System.out.println("RefreshToken is not null");
 			user.setGoogleRefreshToken(credential.getRefreshToken());
+		} else {
+			System.out.println("RefreshToken is null");
 		}
 		user.setGoogleExpiresAt(credential.getExpirationTimeMilliseconds());
 		user.setGoogleExpiresIn(credential.getExpiresInSeconds());
