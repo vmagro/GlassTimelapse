@@ -2,6 +2,8 @@ import os,sys
 import glob
 import overlay
 import urllib2
+
+function process(dir)
 os.chdir(sys.argv[1])
 search_dir = os.getcwd()
 files = filter(os.path.isfile, os.listdir(search_dir))

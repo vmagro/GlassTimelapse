@@ -1,10 +1,11 @@
 from flask import  Flask, request, jsonify
-#import vidmaker
+import vidmaker
 import datetime
 import json
 import base64
+import os
 app = Flask(__name__, static_url_path='')
-
+os.chdir('.')
 @app.route('/')
 def root():
 	return app.send_static_file('index.html')
@@ -16,15 +17,19 @@ def create():
 		token = jdata['accessToken']
 		eventid = jdata['eventId']
 		userid =jdata['gPlusId']
-		image_array = jdata['images']
-		imgindex=0
+		image_array = jdata['images']		
+		vid_dir = os.getcwd()+'/static/'+str(userid)+'/'+str(eventid)
+		if not os.path.exists(os.getcwd()+'/static/'+str(userid)):
+			os.mkdir(os.getcwd()+'/static/'+str(userid))
+		if not os.path.exists(os.getcwd()+'/static/'+str(userid)+'/'+str(eventid)):
+			os.mkdir(os.getcwd()+'/static/'+str(userid)+'/'+str(eventid))
+		imageindex=0
 		for image in image_array:
-			f = open('glass'+imgindex+'.jpg', 'w')
-			f.write(base64.decodestring(image))
-			f.close()		
-		vid_dir = '/static/'+userid+'/'+eventid
-		os.mkdir(vid_dir)
-		#vidmaker.process(vid_dir, token, userid)
+                        f = open(vid_dir+'/glass'+str(imageindex)+'.jpg', 'w')
+                        f.write(base64.decodestring(image))
+                        f.close()
+			imageindex=imageindex+1
+		vidmaker.process(vid_dir, token, userid)
 		return 'Success '+str(eventid)
 	else:
 		return 'What did the fox say?'
