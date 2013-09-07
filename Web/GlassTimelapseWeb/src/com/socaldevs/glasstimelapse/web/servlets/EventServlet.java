@@ -9,7 +9,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
 import com.googlecode.objectify.Key;
+import com.socaldevs.glasstimelapse.web.EndEventRequest;
 import com.socaldevs.glasstimelapse.web.Event;
 import com.socaldevs.glasstimelapse.web.Utils;
 
@@ -43,10 +45,12 @@ public class EventServlet extends HttpServlet {
 				if(!event.hasEnded()) {
 					// end this event
 					event.end();
+					EndEventRequest request = new EndEventRequest(event);
+					Gson gson = new Gson();
+					resp.getWriter().println(gson.toJson(request));
 				} else {
 					// error, no open events
 				}
-				resp.getWriter().println(event.id);
 			}
 		}
 

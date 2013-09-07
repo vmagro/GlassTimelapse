@@ -6,6 +6,7 @@ import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +29,7 @@ import java.io.IOException;
 /**
  * Created by vincente on 9/7/13.
  */
-public class MainFragment extends SherlockFragment implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener, View.OnClickListener{
+public class SignInFragment extends SherlockFragment implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener, View.OnClickListener{
 
     private PlusClient mPlusClient;
     private ProgressDialog mConnectionProgressDialog;
@@ -39,8 +40,8 @@ public class MainFragment extends SherlockFragment implements GooglePlayServices
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
+        View rootView = inflater.inflate(R.layout.fragment_signin, container, false);
+        Log.i(TAG, "In SignInFragment");
         sp = getSherlockActivity().getPreferences(getActivity().MODE_PRIVATE);
         mPlusClient = new PlusClient.Builder(getSherlockActivity(), this, this)
                 .setScopes(Constants.SCOPE_EMAIL,
@@ -52,7 +53,13 @@ public class MainFragment extends SherlockFragment implements GooglePlayServices
         mConnectionProgressDialog.setMessage("Signing in...");
         rootView.findViewById(R.id.sign_in_button).setOnClickListener(this);
 
-
+        //If we already have an access code, lets just keep on going, they don't need to
+        //authenticate again.
+        if(sp.contains(Constants.SP_CODE)){
+            Log.i(TAG, "We have a code, we will just go through the google plus client connection");
+            mPlusClient.connect();
+            mConnectionProgressDialog.show();
+        }
         return rootView;
     }
 
@@ -93,10 +100,9 @@ public class MainFragment extends SherlockFragment implements GooglePlayServices
     @Override
     public void onConnected(Bundle bundle) {
         //We've resolved any connection errors.
-        mConnectionProgressDialog.dismiss();
         String user = mPlusClient.getAccountName();
         Log.i(TAG, "Connected: " + user);
-        connectToServer.execute("");
+        connectToServer.execute(String.valueOf(System.currentTimeMillis()));
     }
 
     //What do we do when the user disconnects our service? We Cry.
@@ -152,9 +158,9 @@ public class MainFragment extends SherlockFragment implements GooglePlayServices
                 );
 
                 Log.i(TAG, "Code: " + code);
-                if(!code.equals(sp.getString(Constants.SP_CODE, "No Code"))){
+                if(!code.equals(sp.getString(Constants.SP_CODE, ""))){
                     Log.i(TAG, "Code given by server was different from last time");
-                    sp.edit().putString(Constants.SP_CODE, code);
+                    sp.edit().putString(Constants.SP_CODE, code).commit();
                 }
 
             } catch (IOException transientEx) {
@@ -185,5 +191,18 @@ public class MainFragment extends SherlockFragment implements GooglePlayServices
 
             return null;
         }
+        protected void onPostExecute(Void result) {
+            //We want to switch back to the news fragment
+            mConnectionProgressDialog.dismiss();
+            getSherlockActivity().sendBroadcast(new Intent(Constants.INTENT_UNLOCK_ID));
+            switchToNewsFeed();
+        }
     };
+
+    private void switchToNewsFeed(){
+        Log.i(TAG, "Switching to News Feed");
+        if(!sp.getString(Constants.SP_CODE, "").equals(""))
+            getSherlockActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.frame_main, new NewsFeedFragment()).commit();
+    }
 }

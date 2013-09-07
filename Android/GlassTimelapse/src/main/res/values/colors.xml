@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="vintage_blue">#639490</color>
+    <color name="vintage_orange">#D1722E</color>
+    <color name="vintage_brown">#CBBD9A</color>
+    <color name="light_grey">#B0B0B0</color>
+    <color name="light_vintage_orange">#e8b896</color>
+    <color name="almost_white">#E6E6E6</color>
+    <color name="fields">#CBBD9A</color>
 </resources>
