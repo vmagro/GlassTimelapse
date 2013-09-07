@@ -25,6 +25,7 @@ public class User extends Jsonifiable {
 	@Expose
 	public String googlePublicProfilePhotoUrl;
 	@Expose
+	@Index
 	public String googleAccessToken;
 	@Expose
 	public String googleRefreshToken;

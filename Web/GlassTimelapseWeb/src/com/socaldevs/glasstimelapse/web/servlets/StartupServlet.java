@@ -3,6 +3,7 @@ package com.socaldevs.glasstimelapse.web.servlets;
 import javax.servlet.http.HttpServlet;
 
 import com.googlecode.objectify.ObjectifyService;
+import com.socaldevs.glasstimelapse.web.Event;
 import com.socaldevs.glasstimelapse.web.User;
 
 /**
@@ -11,5 +12,6 @@ import com.socaldevs.glasstimelapse.web.User;
 public class StartupServlet extends HttpServlet {
 	static {
 		ObjectifyService.register(User.class);
+		ObjectifyService.register(Event.class);
 	}
 }

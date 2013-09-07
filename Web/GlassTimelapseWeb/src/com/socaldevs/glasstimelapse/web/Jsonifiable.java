@@ -15,8 +15,6 @@ package com.socaldevs.glasstimelapse.web;
  * limitations under the License.
  */
 
-
-
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.Date;

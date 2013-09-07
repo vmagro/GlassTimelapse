@@ -91,7 +91,7 @@ public abstract class JsonRestServlet extends HttpServlet {
 	protected void sendError(HttpServletResponse resp, int code, String message) {
 		try {
 			if (code == 401) {
-				resp.addHeader("WWW-Authenticate", "OAuth realm=\"Carpoolr\", error=\"invalid-token\"");
+				resp.addHeader("WWW-Authenticate", "OAuth realm=\"GlassTimelapse\", error=\"invalid-token\"");
 			}
 
 			resp.sendError(code, message);
