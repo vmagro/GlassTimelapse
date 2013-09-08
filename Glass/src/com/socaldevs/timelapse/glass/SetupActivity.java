@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -24,6 +25,12 @@ public class SetupActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.setup);
+		
+		SharedPreferences prefs = this.getSharedPreferences("stor",
+				Context.MODE_PRIVATE);
+		if (prefs.getBoolean("paired", false)) {
+			goToMain();
+		}
 	}
 
 	private void send() {
@@ -74,7 +81,7 @@ public class SetupActivity extends Activity {
 			if (result) {
 				SharedPreferences prefs = getSharedPreferences("stor", Context.MODE_PRIVATE);
 				prefs.edit().putBoolean("paired", true).commit();
-				SetupActivity.this.finish();
+				goToMain();
 			} else {
 				SharedPreferences prefs = getSharedPreferences("stor", Context.MODE_PRIVATE);
 				prefs.edit().putBoolean("paired", false).commit();
@@ -82,6 +89,11 @@ public class SetupActivity extends Activity {
 			}
 		}
 
+	}
+	
+	public void goToMain(){
+		Intent i = new Intent(this, MainActivity.class);
+		startActivity(i);
 	}
 
 	public void setError() {

@@ -1,8 +1,9 @@
 package com.socaldevs.timelapse.glass;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
-
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
 
 import android.content.Context;
@@ -35,12 +36,14 @@ public class Uploader extends AsyncTask<byte[], Void, Void> {
 			
 			byte[] bytes = json.toString().getBytes();
 			
-			HttpURLConnection conn = (HttpURLConnection) new URL(
-					Constants.UPLOAD_URL).openConnection();
 			
-			conn.setRequestMethod("POST");
-			conn.getOutputStream().write(bytes);
-			conn.getOutputStream().close();
+			HttpClient cli = new DefaultHttpClient();
+			
+			HttpPost post = new HttpPost(Constants.UPLOAD_URL);
+			ByteArrayEntity entity = new ByteArrayEntity(bytes);
+			post.setEntity(entity);
+			
+			cli.execute(post);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
