@@ -3,12 +3,10 @@ package com.socaldevs.timelapse.glass;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.DecimalFormat;
 
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.Activity;
@@ -157,9 +155,9 @@ public class MainActivity extends Activity {
 
 				try {
 					HttpClient cli = new DefaultHttpClient();
-					HttpGet get = new HttpGet(Constants.EVENT_URL + "?mode=new&glassId="+id);
+					HttpPost post = new HttpPost(Constants.EVENT_URL + "?mode=new&glassId="+id);
 					Log.i("event url", Constants.EVENT_URL + "?mode=new&glassId="+id);
-					DataInputStream dis = new DataInputStream(cli.execute(get).getEntity().getContent());
+					DataInputStream dis = new DataInputStream(cli.execute(post).getEntity().getContent());
 					event = dis.readInt();
 					Log.i("event id", ""+event);
 				} catch (Exception ex) {

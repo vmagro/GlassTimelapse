@@ -8,7 +8,7 @@ public class Constants {
 	public static final String BT_SERVICE_NAME = "glasstimelapse";
 	
 	public static final String BASE_URL = "http://hip-apricot-331.appspot.com/";
-	public static final String UPLOAD_URL = BASE_URL + "upload";
+	public static final String UPLOAD_URL = BASE_URL + "upload?mode=getUploadUrl";
 	public static final String EVENT_URL = BASE_URL + "event";
 
 }
