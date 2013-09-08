@@ -48,7 +48,7 @@ public class Uploader extends AsyncTask<byte[], Void, Void> {
 		    reqEntity.addPart("eventId",new StringBody(""+eventId));
 		    reqEntity.addPart("index", new StringBody(""+index));
 		    try{
-		        ByteArrayBody bab = new ByteArrayBody(params[0], "image");
+		        ByteArrayBody bab = new ByteArrayBody(params[0], "image/jpeg", "image");
 		        reqEntity.addPart("image", bab);
 		    }
 		    catch(Exception e){

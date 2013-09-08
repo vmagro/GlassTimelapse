@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -155,11 +156,14 @@ public class MainActivity extends Activity {
 
 				try {
 					HttpClient cli = new DefaultHttpClient();
-					HttpPost post = new HttpPost(Constants.EVENT_URL + "?mode=new&glassId="+id);
-					Log.i("event url", Constants.EVENT_URL + "?mode=new&glassId="+id);
-					DataInputStream dis = new DataInputStream(cli.execute(post).getEntity().getContent());
+					HttpPost post = new HttpPost(Constants.EVENT_URL
+							+ "?mode=new&glassId=" + id);
+					Log.i("event url", Constants.EVENT_URL
+							+ "?mode=new&glassId=" + id+"&eventId="+eventId);
+					DataInputStream dis = new DataInputStream(cli.execute(post)
+							.getEntity().getContent());
 					event = dis.readInt();
-					Log.i("event id", ""+event);
+					Log.i("event id", "" + event);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -188,6 +192,21 @@ public class MainActivity extends Activity {
 	private void stop() {
 		running = false;
 		wakeLock.release();
+
+		String id = Secure.getString(MainActivity.this.getContentResolver(),
+				Secure.ANDROID_ID);
+
+		HttpClient cli = new DefaultHttpClient();
+		HttpPost post = new HttpPost(Constants.EVENT_URL + "?mode=end&glassId="
+				+ id);
+		try {
+			cli.execute(post).getEntity().consumeContent();
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		Log.i("status", "released wakelock");
 	}
 
