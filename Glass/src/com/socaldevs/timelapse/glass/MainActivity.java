@@ -1,26 +1,33 @@
 package com.socaldevs.timelapse.glass;
 
+import java.io.DataInputStream;
+import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.DecimalFormat;
+
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
-import android.location.Location;
-import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.provider.Settings.Secure;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
 import android.widget.FrameLayout;
 
 public class MainActivity extends Activity {
@@ -34,28 +41,23 @@ public class MainActivity extends Activity {
 
 	private WakeLock wakeLock = null;
 
-	// private File dir = new File("/sdcard/timelapse");
-	// private DecimalFormat formatter = new DecimalFormat("00000");
-	// private static int picNum = 0;
+	private File dir = new File("/sdcard/timelapse");
+	private DecimalFormat formatter = new DecimalFormat("00000");
+	private static int picNum = 0;
 
-	private LocationManager locationManager = null;
-	private String locationProvider = null;
-	
-	private int picIndex = 0;
+	private int eventId = -1;
 
 	private PictureCallback mPicture = new PictureCallback() {
 
 		@Override
 		public void onPictureTaken(byte[] data, Camera camera) {
+			if (!running)
+				return;
 			Log.i("status", "picture taken");
 			Log.i("length", "" + data.length);
-			Log.i("exposure", ""
-					+ camera.getParameters().getExposureCompensation());
 
-			// File out = new File(dir,
-			// "lapse_1_img"+formatter.format(picNum)+".jpg");
-			// File out = new File(dir, "single.jpg");
-			// picNum++;
+			// File out = new File(dir, "lapse_1_img" + formatter.format(picNum)
+			// + ".jpg");
 			// FileOutputStream fos;
 			// try {
 			// fos = new FileOutputStream(out);
@@ -64,9 +66,13 @@ public class MainActivity extends Activity {
 			// e.printStackTrace();
 			// }
 
-			Uploader uploader = new Uploader(picIndex);
+			if (eventId == -1)
+				return;
+
+			Uploader uploader = new Uploader(MainActivity.this, eventId, picNum);
 			uploader.execute(data);
-			picIndex++;
+
+			picNum++;
 		}
 	};
 
@@ -77,10 +83,7 @@ public class MainActivity extends Activity {
 
 		handler = new Handler();
 
-		// dir.mkdirs();
-
-		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		locationProvider = locationManager.getProviders(true).get(0);
+		dir.mkdirs();
 
 		// Log.i("autofocus support",
 		// String.valueOf(getPackageManager().hasSystemFeature("android.hardware.camera.autofocus")));
@@ -93,52 +96,22 @@ public class MainActivity extends Activity {
 		mCamera = getCameraInstance();
 
 		// Create our Preview view and set it as the content of our activity.
-		mPreview = new CameraPreview(this, mCamera);
+		mPreview = new CameraPreview(this);
 		FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
 		preview.addView(mPreview);
 
 		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 		wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK,
 				"Glass Timelapse");
-
-		Camera.Parameters params = mCamera.getParameters();
-
-		params.setPictureSize(1280, 720);
-
-		List<String> focusModes = params.getSupportedFocusModes();
-
-		for (String s : focusModes) {
-			Log.i("supported focus mode", s);
-		}
-		Log.i("autofocus mode", params.getFocusMode());
-
-		Log.i("min exposure compensation",
-				"" + params.getMinExposureCompensation());
-		Log.i("max exposure compensation",
-				"" + params.getMaxExposureCompensation());
-
-		params.setExposureCompensation(-30);
-
-		params.setSceneMode(Camera.Parameters.SCENE_MODE_STEADYPHOTO);
-
-		mCamera.setParameters(params);
-
-		Log.i("exposure compensation", ""
-				+ mCamera.getParameters().getExposureCompensation());
-		Log.i("scene mode", "" + mCamera.getParameters().getSceneMode());
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		releaseCamera();
-	}
-
-	private void releaseCamera() {
-		if (mCamera != null) {
-			mCamera.release(); // release the camera for other applications
-			mCamera = null;
-		}
+		mCamera.stopPreview();
+		mCamera.unlock();
+		mCamera.release();
+		mCamera = null;
 	}
 
 	/** Check if this device has a camera */
@@ -171,18 +144,47 @@ public class MainActivity extends Activity {
 	private void start() {
 		wakeLock.acquire();
 		Log.i("status", "acquired wakelock");
-		mPreview.setVisibility(View.INVISIBLE);
 		running = true;
-		handler.postDelayed(new Runnable() {
 
-			public void run() {
-				// do something
-				takePicture();
+		new AsyncTask<Void, Void, Integer>() {
 
-				if (running)
-					handler.postDelayed(this, DELAY);
+			@Override
+			protected Integer doInBackground(Void... params) {
+				int event = -1;
+				String id = Secure.getString(
+						MainActivity.this.getContentResolver(),
+						Secure.ANDROID_ID);
+
+				try {
+					HttpClient cli = new DefaultHttpClient();
+					HttpGet get = new HttpGet(Constants.EVENT_URL + "?mode=new&glassId="+id);
+					Log.i("event url", Constants.EVENT_URL + "?mode=new&glassId="+id);
+					DataInputStream dis = new DataInputStream(cli.execute(get).getEntity().getContent());
+					event = dis.readInt();
+					Log.i("event id", ""+event);
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+
+				return event;
 			}
-		}, 1000);
+
+			@Override
+			protected void onPostExecute(Integer result) {
+				MainActivity.this.eventId = result;
+
+				handler.postDelayed(new Runnable() {
+
+					public void run() {
+						// do something
+						takePicture();
+
+						if (running)
+							handler.postDelayed(this, DELAY);
+					}
+				}, 1000);
+			}
+		}.execute();
 	}
 
 	private void stop() {
@@ -196,11 +198,6 @@ public class MainActivity extends Activity {
 			Log.e("cam status", "camera is null");
 			return;
 		}
-		Camera.Parameters params = mCamera.getParameters();
-		Location loc = locationManager.getLastKnownLocation(locationProvider);
-		params.setGpsLatitude(loc.getLatitude());
-		params.setGpsLongitude(loc.getLongitude());
-		mCamera.setParameters(params);
 		mCamera.takePicture(null, null, mPicture);
 		Log.i("status", "called takePicture");
 	}
@@ -250,11 +247,9 @@ public class MainActivity extends Activity {
 	public class CameraPreview extends SurfaceView implements
 			SurfaceHolder.Callback {
 		private SurfaceHolder mHolder;
-		private Camera mCamera;
 
-		public CameraPreview(Context context, Camera camera) {
+		public CameraPreview(Context context) {
 			super(context);
-			mCamera = camera;
 
 			// Install a SurfaceHolder.Callback so we get notified when the
 			// underlying surface is created and destroyed.

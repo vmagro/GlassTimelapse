@@ -1,9 +1,9 @@
 from PIL import Image, ImageFilter, ImageDraw, ImageFont
 from PIL.ExifTags import TAGS, GPSTAGS
-import urllib, cStringIO
-import sys, json, textwrap 
+import urllib, urllib2, cStringIO
+import sys, json, textwrap, os 
 
-def process(image_file, index):
+def process(image_file, index, userid, token, eventid):
     #open original image
     image = Image.open(image_file)
     exif_data = get_exif_data(image)
@@ -21,8 +21,8 @@ def process(image_file, index):
     map = Image.merge(map.mode, bands)
     #create city/time tile    
     card = Image.new('RGBA', (273,252), (0,0,0))
-    roboto_30 = ImageFont.truetype("/var/www/Roboto-Light.ttf", 30)
-    roboto_45 = ImageFont.truetype("/var/www/Roboto-Light.ttf", 45)
+    roboto_30 = ImageFont.truetype("/home/david/GlassTimelapse/GCE/Roboto-Light.ttf", 30)
+    roboto_45 = ImageFont.truetype("/home/david/GlassTimelapse/GCE/Roboto-Light.ttf", 45)
     draw = ImageDraw.Draw(card)
     date,time = exif_data['DateTime'].split(' ')
     hour, min, sec = time.split(':')
@@ -47,18 +47,31 @@ def process(image_file, index):
     cardoffset=(imgwidth-20-273, 20)
     #create Google+ information
     profile_pic_size = '100'
-    profile_url = 'https://plus.google.com/s2/photos/profile/'+gplus_id+'?sz='+profile_pic_size
-    profile_data_url = 'https://www.googleapis.com/plus/v1/people/'+gplus_id
+    #get access token
+    post_url = 'https://accounts.google.com/o/oauth2/token'
+    our_client_id='597615227690-pfgba7ficse1kf1su0qkgjllktcb7psf.apps.googleusercontent.com'
+    our_client_secret='RwkS3k8UQKDNALu-B_nQxtDd'
+    values = {'refresh_token' : token, 'grant_type' : 'refresh_token', 'client_id' : our_client_id, 'client_secret' : our_client_secret}
+    data = urllib.urlencode(values)
+    req = urllib2.Request(post_url, data)
+    rsp = urllib2.urlopen(req)
+    content = rsp.read()
+    jauth = json.loads(content);
+    atoken = jauth['access_token']
+    #get profile info
+    profile_data_url = 'https://www.googleapis.com/plus/v1/people/'+userid+'?access_token='+atoken
     response = urllib.urlopen(profile_data_url)
     ndata = json.load(response)
-    #name = ndata['displayName']
-    print(ndata)
-    name = "David Carr"
+    name = ndata['displayName']
+    profile_pic_object = ndata['image']
+    profile_url = profile_pic_object['url']
+    profile_url = profile_url[:-5]
+    profile_url = profile_url+'sz='+profile_pic_size
     prof_file = cStringIO.StringIO(urllib.urlopen(profile_url).read())
     profpic = Image.open(prof_file)
     profpic = profpic.convert('RGBA')
     pbands = list(profpic.split())
-    pbands[3] = pbands[3].point(lambda x: x*0.6)
+    pbands[3] = pbands[3].point(lambda x: x*0.7)
     profpic = Image.merge(profpic.mode, pbands)
     prof_offset = (20, 600)
     profnamebox = Image.new('RGBA', (600,200))
@@ -136,7 +149,3 @@ def get_lat_lon(exif_data):
                 lon = 0 - lon
  
     return str(lat)+','+str(lon)
-
-if __name__ == "__main__":
-    process(image_file, index)
-

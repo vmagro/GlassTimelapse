@@ -1,0 +1,131 @@
+html, body {
+	text-align: center;
+	padding: 0;
+	margin: 0;
+	font-family: "Roboto";
+	background: #639490;
+	color: #fff;
+}
+
+header {
+	background: #9b2612;
+	color: white;
+	padding: 20px;
+	text-align: left;
+	border-bottom: 2px solid #73190a;
+	z-index: 10;
+}
+
+header h1 {
+	font-size: 30px;
+	margin: 0;
+	padding: 0;
+	line-height: 30px;
+	display: inline-block;
+	text-shadow: 3px 3px 7px rgba(0,0,0,0.7);
+}
+
+#signinButton, #currentUser {
+	float: right;
+}
+
+#signinButton.hidden {
+	display: none;
+}
+
+#currentUser {
+	font-size: 13px;
+	line-height: 30px;
+	color: #ddd;
+}
+
+#currentUser img {
+	height: 30px;
+	width: 30px;
+	margin-left: 10px;
+	float: right;
+}
+
+.center {
+	width: 80%;
+	margin: 0 auto;
+}
+.center.narrow {
+	width: 60%;
+}
+
+#welcome {
+	text-align: center;
+	width: 60%;
+	margin: 0 auto;
+}
+
+#welcome h2 {
+	font-size: 50px;
+	font-weight: 300;
+	text-shadow: 3px 3px 7px rgba(0,0,0,0.9);
+}
+#welcome .desc {
+	font-size: 20px;
+	text-shadow: 1px 1px 2px rgba(0,0,0,0.9);	
+	opacity: 0.8;
+}
+
+ul#menu {
+	width: 25%;
+	background: #d1722e;
+	list-style: none;
+	padding: 10px 0px;
+	margin: 0;
+	text-align: left;
+	box-sizing: border-box;
+	
+	border: 1px solid #c06626;
+	box-shadow: 0px 0px 10px rgba(0,0,0,0.5);
+	border-top: none;
+	float: left;
+}
+
+ul#menu li {
+	padding: 15px 10px;
+	cursor: pointer;
+}
+ul#menu li:hover {
+	background: rgba(255, 255, 255, 0.1);
+}
+ul#menu li.active {
+	background: rgba(255, 255, 255, 0.2);
+}
+
+#content {
+	width: 73%;
+	float: right;
+	padding-top: 10px;
+}
+
+#content .box {
+	background: #cbbd9a;
+	background-image: url('glass.png');
+	background-repeat: no-repeat;
+	padding: 10px 0 10px 120px;
+	height: 70px;
+	border-box: box-sizing;
+	text-align: left;
+	text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+#content .glass h4 {
+	margin: 0;
+	padding: 0;
+	font-size: 25px;
+	font-weight: 300;
+}
+#content .glass p {
+	margin: 0;
+	padding: 0;
+	opacity: 0.8;
+}
+
+.clear {
+	clear: both;
+}
