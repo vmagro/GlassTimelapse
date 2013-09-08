@@ -26,13 +26,15 @@
         <activity
             android:name="com.socaldevs.timelapse.glass.MainActivity"
             android:label="@string/app_name" android:screenOrientation="landscape">
-            <intent-filter>
+           
+        </activity>
+        <activity android:name=".SetupActivity">
+             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SetupActivity"></activity>
     </application>
 
 </manifest>

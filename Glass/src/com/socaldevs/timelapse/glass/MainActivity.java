@@ -68,6 +68,7 @@ public class MainActivity extends Activity {
 				return;
 
 			Uploader uploader = new Uploader(MainActivity.this, eventId, picNum);
+			uploader.execute(data);
 
 			picNum++;
 		}
@@ -82,12 +83,7 @@ public class MainActivity extends Activity {
 
 		dir.mkdirs();
 
-		SharedPreferences prefs = this.getSharedPreferences("stor",
-				Context.MODE_PRIVATE);
-		if (!prefs.getBoolean("paired", false)) {
-			Intent i = new Intent(this, SetupActivity.class);
-			startActivity(i);
-		}
+		
 
 		// Log.i("autofocus support",
 		// String.valueOf(getPackageManager().hasSystemFeature("android.hardware.camera.autofocus")));
