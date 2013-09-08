@@ -16,6 +16,7 @@ public class Image {
 	// Image 3 of 5000, for example
 	@Index
 	public int index;
+	@Index
 	public int eventId;
 	public BlobKey imageKey;
 	public Date time;
