@@ -24,6 +24,14 @@
 		<servlet-class>com.socaldevs.glasstimelapse.web.servlets.EventServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
+		<servlet-name>PairGlassServlet</servlet-name>
+		<url-pattern>/pairGlass</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>PairGlassServlet</servlet-name>
+		<servlet-class>com.socaldevs.glasstimelapse.web.servlets.PairGlassServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
 		<servlet-name>UploadServlet</servlet-name>
 		<url-pattern>/upload</url-pattern>
 	</servlet-mapping>

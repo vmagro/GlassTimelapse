@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import com.googlecode.objectify.Key;
 import com.socaldevs.glasstimelapse.web.EndEventRequest;
 import com.socaldevs.glasstimelapse.web.Event;
+import com.socaldevs.glasstimelapse.web.User;
 import com.socaldevs.glasstimelapse.web.Utils;
 
 public class EventServlet extends HttpServlet {
@@ -28,11 +29,18 @@ public class EventServlet extends HttpServlet {
 		String mode = req.getParameter("mode");
 
 		if (mode.equals("new")) {
-			if (Utils.isUserLoggedIn(req.getSession())) {
-				Event event = new Event(Utils.getCurrentUserId(req.getSession()), new Date());
+			// if (Utils.isUserLoggedIn(req.getSession())) {
+			String glassId = req.getParameter("glassId");
+			User user = ofy().load().type(User.class).filter("glassId", glassId).first().now();
+
+			if (user != null) {
+				Event event = new Event(user.id, new Date());
 				Key<Event> k = ofy().save().entity(event).now();
 				resp.getWriter().println(k.getId());
+			} else {
+				resp.getWriter().println("User not found.");
 			}
+
 		} else if (mode.equals("end")) {
 			if (Utils.isUserLoggedIn(req.getSession())) {
 				Long userId = Utils.getCurrentUserId(req.getSession());
