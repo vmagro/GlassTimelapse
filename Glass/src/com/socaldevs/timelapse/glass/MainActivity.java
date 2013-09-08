@@ -159,7 +159,7 @@ public class MainActivity extends Activity {
 					HttpPost post = new HttpPost(Constants.EVENT_URL
 							+ "?mode=new&glassId=" + id);
 					Log.i("event url", Constants.EVENT_URL
-							+ "?mode=new&glassId=" + id+"&eventId="+eventId);
+							+ "?mode=new&glassId=" + id);
 					DataInputStream dis = new DataInputStream(cli.execute(post)
 							.getEntity().getContent());
 					event = dis.readInt();
@@ -191,14 +191,13 @@ public class MainActivity extends Activity {
 
 	private void stop() {
 		running = false;
-		wakeLock.release();
 
 		String id = Secure.getString(MainActivity.this.getContentResolver(),
 				Secure.ANDROID_ID);
 
 		HttpClient cli = new DefaultHttpClient();
 		HttpPost post = new HttpPost(Constants.EVENT_URL + "?mode=end&glassId="
-				+ id);
+				+ id + "&eventId=" + eventId);
 		try {
 			cli.execute(post).getEntity().consumeContent();
 		} catch (ClientProtocolException e) {
@@ -207,7 +206,12 @@ public class MainActivity extends Activity {
 			e.printStackTrace();
 		}
 
-		Log.i("status", "released wakelock");
+		try {
+			wakeLock.release();
+			Log.i("status", "released wakelock");
+		} catch (Exception ex) {
+			Log.e("wakelock", "error releasing wakelock, proceeding normally");
+		}
 	}
 
 	private void takePicture() {
