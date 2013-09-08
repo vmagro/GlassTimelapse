@@ -5,12 +5,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
-
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -30,6 +29,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.FrameLayout;
 
+@SuppressLint("NewApi")
 public class MainActivity extends Activity {
 
 	private static final int DELAY = 5000; // 5 seconds
@@ -84,6 +84,8 @@ public class MainActivity extends Activity {
 		handler = new Handler();
 
 		dir.mkdirs();
+		
+		Log.i("status", "started");
 
 		// Log.i("autofocus support",
 		// String.valueOf(getPackageManager().hasSystemFeature("android.hardware.camera.autofocus")));
@@ -144,6 +146,10 @@ public class MainActivity extends Activity {
 	private boolean running = false;
 
 	private void start() {
+		if(running){
+			Log.i("status", "already running with event id = "+eventId);
+			return;
+		}
 		wakeLock.acquire();
 		Log.i("status", "acquired wakelock");
 		running = true;
@@ -250,16 +256,28 @@ public class MainActivity extends Activity {
 		switch (item.getItemId()) {
 		case R.id.action_start:
 			start();
+			invalidateOptionsMenu();
 			return true;
 		case R.id.action_stop:
 			stop();
-			return true;
-		case R.id.action_take_picture:
-			takePicture();
+			invalidateOptionsMenu();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+	
+	@Override
+	public boolean onPrepareOptionsMenu (Menu menu) {
+	    if (running){
+	        menu.getItem(0).setEnabled(false);
+	        menu.getItem(1).setEnabled(true);
+	    }
+	    else{
+	    	menu.getItem(1).setEnabled(false);
+	    	menu.getItem(0).setEnabled(true);
+	    }
+	    return true;
 	}
 
 	/**
