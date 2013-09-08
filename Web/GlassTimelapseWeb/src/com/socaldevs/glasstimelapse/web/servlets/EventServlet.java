@@ -3,6 +3,10 @@ package com.socaldevs.glasstimelapse.web.servlets;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Date;
 
 import javax.servlet.http.HttpServlet;
@@ -53,21 +57,26 @@ public class EventServlet extends HttpServlet {
 				Gson gson = new Gson();
 				resp.getWriter().println(gson.toJson(request));
 
-				// try {
-				// URL url = new URL("http://173.255.121.241/create");
-				// BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-				// String line;
-				//
-				// while ((line = reader.readLine()) != null) {
-				// // ...
-				// }
-				// reader.close();
-				//
-				// } catch (MalformedURLException e) {
-				// // ...
-				// } catch (IOException e) {
-				// // ...
-				// }
+				try {
+					URL url = new URL("http://173.255.121.241/create");
+					HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+					connection.setDoOutput(true);
+					connection.setRequestMethod("POST");
+
+					OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+					writer.write(gson.toJson(request));
+					writer.close();
+
+					if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+						// OK
+					} else {
+						// Server returned HTTP error code.
+					}
+				} catch (MalformedURLException e) {
+					// ...
+				} catch (IOException e) {
+					// ...
+				}
 			} else {
 				// error, no open events
 			}
