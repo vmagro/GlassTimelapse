@@ -54,21 +54,32 @@ public class SyncServerPostcards extends AsyncTask<Void, Void, JSONArray>{
     @Override
     protected void onPostExecute(JSONArray jsonArray) {
         super.onPostExecute(jsonArray);
-        arrayList.clear();
-        for(int i=0; i<jsonArray.length(); i++){
-            try {
-                String user     = jsonArray.getJSONObject(i).getString("userId");
-                String location = jsonArray.getJSONObject(i).getString("startTime");
-                String videoUrl = "http://www.youtube.com/watch?v=jofNR_WkoCE";
-                String preview  = "http://socaldevs.com/wp-content/uploads/2011/07/socal-devs-2-" +
-                        "big-e1312568698579.png";
+        if(jsonArray != null){
+            arrayList.clear();
+            for(int i=0; i<jsonArray.length(); i++){
+                try {
+                    String user     = jsonArray.getJSONObject(i).getString("userId");
+                    String eventId  = jsonArray.getJSONObject(i).getString("id");
+                    String location = jsonArray.getJSONObject(i).getString("startTime");
+                    String videoUrl = jsonArray.getJSONObject(i).getString("youtubeUrl");
+                    String preview  = Constants.SERVER_EVENTS+"?mode=getImage&eventId=" + eventId +
+                            "&i=1";
 
-                Postcard temp = new Postcard(user, location, videoUrl, preview);
-                arrayList.add(temp);
-            } catch (JSONException e) {
-                e.printStackTrace();
+                    Postcard temp = new Postcard(user, location, videoUrl, preview);
+                    if(videoUrl != null)
+                        arrayList.add(temp);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
+            if(arrayList.size() == 0)
+                arrayList.add(Constants.POSTCARD_NONE);
         }
+        else{
+            arrayList.clear();
+            arrayList.add(Constants.POSTCARD_ERROR);
+        }
+
         adapter.notifyDataSetChanged();
     }
 }

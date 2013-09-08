@@ -189,6 +189,8 @@ public class MainActivity extends SherlockFragmentActivity{
             } else {
                 mDrawerLayout.openDrawer(mDrawerList);
             }
+        }else if (item.getItemId() == R.id.action_refresh){
+            sendBroadcast(new Intent(Constants.INTENT_REFRESH));
         }
 
         return super.onOptionsItemSelected(item);

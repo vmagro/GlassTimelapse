@@ -18,11 +18,21 @@ public class Constants {
     public static final String SP_CODE          = "wheresthecode";
     public static final String SP_ID            = "freakingid...";
     public static final String SP_NAME          = "person name....";
+
+    public static final String INTENT_REFRESH   = "3308";
     public static final String INTENT_UNLOCK_ID = "3309";
 
     public static final Postcard POSTCARD_LOADING   = new Postcard("Loading Postcards",
             "This might take a moment",
             "http://socaldevs.com/wp-content/uploads/2011/07/socal-devs-2-big-e1312568698579.png",
             "http://socaldevs.com/wp-content/uploads/2011/07/socal-devs-2-big-e1312568698579.png");
-
+    public static final Postcard POSTCARD_NONE      = new Postcard("No Postcards Available",
+            "Try Again Later", "http://www.youtube.com/watch?v=jofNR_WkoCE",
+            "http://socaldevs.com/wp-content/uploads/2011/07/socal-devs-2-big-e1312568698579.png");
+    public static final Postcard POSTCARD_ERROR     = new Postcard("There Was An Error",
+            "Try Again Later", "http://www.youtube.com/watch?v=jofNR_WkoCE",
+            "http://socaldevs.com/wp-content/uploads/2011/07/socal-devs-2-big-e1312568698579.png");
+    public static final Postcard POSTCARD_REFRESHING=new Postcard("Refreshing",
+            "Hold on a Sec", "http://www.youtube.com/watch?v=jofNR_WkoCE",
+            "http://socaldevs.com/wp-content/uploads/2011/07/socal-devs-2-big-e1312568698579.png");
 }

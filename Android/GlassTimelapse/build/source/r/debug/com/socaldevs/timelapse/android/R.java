@@ -1033,28 +1033,29 @@ containing a value of this type.
         public static final int common_signin_btn_text_pressed_dark=0x7f020093;
         public static final int common_signin_btn_text_pressed_light=0x7f020094;
         public static final int drawer_shadow=0x7f020095;
-        public static final int ic_drawer=0x7f020096;
-        public static final int ic_launcher=0x7f020097;
-        public static final int list_focused_vintagepostcard=0x7f020098;
-        public static final int menu_dropdown_panel_vintagepostcard=0x7f020099;
-        public static final int pressed_background_vintagepostcard=0x7f02009a;
-        public static final int progress_bg_vintagepostcard=0x7f02009b;
-        public static final int progress_horizontal_vintagepostcard=0x7f02009c;
-        public static final int progress_primary_vintagepostcard=0x7f02009d;
-        public static final int progress_secondary_vintagepostcard=0x7f02009e;
-        public static final int selectable_background_vintagepostcard=0x7f02009f;
-        public static final int spinner_ab_default_vintagepostcard=0x7f0200a0;
-        public static final int spinner_ab_disabled_vintagepostcard=0x7f0200a1;
-        public static final int spinner_ab_focused_vintagepostcard=0x7f0200a2;
-        public static final int spinner_ab_pressed_vintagepostcard=0x7f0200a3;
-        public static final int spinner_background_ab_vintagepostcard=0x7f0200a4;
-        public static final int tab_indicator_ab_vintagepostcard=0x7f0200a5;
-        public static final int tab_selected_focused_vintagepostcard=0x7f0200a6;
-        public static final int tab_selected_pressed_vintagepostcard=0x7f0200a7;
-        public static final int tab_selected_vintagepostcard=0x7f0200a8;
-        public static final int tab_unselected_focused_vintagepostcard=0x7f0200a9;
-        public static final int tab_unselected_pressed_vintagepostcard=0x7f0200aa;
-        public static final int tab_unselected_vintagepostcard=0x7f0200ab;
+        public static final int ic_action_refresh=0x7f020096;
+        public static final int ic_drawer=0x7f020097;
+        public static final int ic_launcher=0x7f020098;
+        public static final int list_focused_vintagepostcard=0x7f020099;
+        public static final int menu_dropdown_panel_vintagepostcard=0x7f02009a;
+        public static final int pressed_background_vintagepostcard=0x7f02009b;
+        public static final int progress_bg_vintagepostcard=0x7f02009c;
+        public static final int progress_horizontal_vintagepostcard=0x7f02009d;
+        public static final int progress_primary_vintagepostcard=0x7f02009e;
+        public static final int progress_secondary_vintagepostcard=0x7f02009f;
+        public static final int selectable_background_vintagepostcard=0x7f0200a0;
+        public static final int spinner_ab_default_vintagepostcard=0x7f0200a1;
+        public static final int spinner_ab_disabled_vintagepostcard=0x7f0200a2;
+        public static final int spinner_ab_focused_vintagepostcard=0x7f0200a3;
+        public static final int spinner_ab_pressed_vintagepostcard=0x7f0200a4;
+        public static final int spinner_background_ab_vintagepostcard=0x7f0200a5;
+        public static final int tab_indicator_ab_vintagepostcard=0x7f0200a6;
+        public static final int tab_selected_focused_vintagepostcard=0x7f0200a7;
+        public static final int tab_selected_pressed_vintagepostcard=0x7f0200a8;
+        public static final int tab_selected_vintagepostcard=0x7f0200a9;
+        public static final int tab_unselected_focused_vintagepostcard=0x7f0200aa;
+        public static final int tab_unselected_pressed_vintagepostcard=0x7f0200ab;
+        public static final int tab_unselected_vintagepostcard=0x7f0200ac;
     }
     public static final class id {
         public static final int abs__action_bar=0x7f070024;
@@ -1098,7 +1099,7 @@ containing a value of this type.
         public static final int abs__textButton=0x7f070017;
         public static final int abs__title=0x7f07001f;
         public static final int abs__up=0x7f070013;
-        public static final int action_settings=0x7f070041;
+        public static final int action_refresh=0x7f070041;
         public static final int albumListView=0x7f070039;
         public static final int disableHome=0x7f07000c;
         public static final int drawer_layout=0x7f070036;
@@ -1185,13 +1186,14 @@ containing a value of this type.
         public static final int abs__shareactionprovider_share_with_application=0x7f0a000c;
         /**  From: file:/home/vincente/git/GlassTimelapse/Android/GlassTimelapse/src/main/res/values/strings.xml 
          */
-        public static final int action_settings=0x7f0a000d;
-        public static final int app_name=0x7f0a000e;
+        public static final int action_refresh=0x7f0a000d;
+        public static final int action_settings=0x7f0a000e;
+        public static final int app_name=0x7f0a000f;
         /**  From: file:/home/vincente/git/GlassTimelapse/Android/GlassTimelapse/build/exploded-bundles/ComGoogleAndroidGmsPlayServices3136.aar/res/values/strings.xml 
          */
-        public static final int auth_client_availability_notification_title=0x7f0a000f;
-        public static final int auth_client_play_services_err_notification_msg=0x7f0a0010;
-        public static final int auth_client_requested_by_msg=0x7f0a0011;
+        public static final int auth_client_availability_notification_title=0x7f0a0010;
+        public static final int auth_client_play_services_err_notification_msg=0x7f0a0011;
+        public static final int auth_client_requested_by_msg=0x7f0a0012;
         /**  From: file:/home/vincente/git/GlassTimelapse/Android/GlassTimelapse/build/exploded-bundles/ComGoogleAndroidGmsPlayServices3136.aar/res/values-af/strings.xml 
  From: file:/home/vincente/git/GlassTimelapse/Android/GlassTimelapse/build/exploded-bundles/ComGoogleAndroidGmsPlayServices3136.aar/res/values-am/strings.xml 
  From: file:/home/vincente/git/GlassTimelapse/Android/GlassTimelapse/build/exploded-bundles/ComGoogleAndroidGmsPlayServices3136.aar/res/values-ar/strings.xml 
@@ -1242,34 +1244,34 @@ containing a value of this type.
  From: file:/home/vincente/git/GlassTimelapse/Android/GlassTimelapse/build/exploded-bundles/ComGoogleAndroidGmsPlayServices3136.aar/res/values-zh-rTW/strings.xml 
  From: file:/home/vincente/git/GlassTimelapse/Android/GlassTimelapse/build/exploded-bundles/ComGoogleAndroidGmsPlayServices3136.aar/res/values-zu/strings.xml 
          */
-        public static final int common_google_play_services_enable_button=0x7f0a0012;
-        public static final int common_google_play_services_enable_text=0x7f0a0013;
-        public static final int common_google_play_services_enable_title=0x7f0a0014;
-        public static final int common_google_play_services_install_button=0x7f0a0015;
-        public static final int common_google_play_services_install_text_phone=0x7f0a0016;
-        public static final int common_google_play_services_install_text_tablet=0x7f0a0017;
-        public static final int common_google_play_services_install_title=0x7f0a0018;
-        public static final int common_google_play_services_unknown_issue=0x7f0a0019;
-        public static final int common_google_play_services_unsupported_text=0x7f0a001a;
-        public static final int common_google_play_services_unsupported_title=0x7f0a001b;
-        public static final int common_google_play_services_update_button=0x7f0a001c;
-        public static final int common_google_play_services_update_text=0x7f0a001d;
-        public static final int common_google_play_services_update_title=0x7f0a001e;
-        public static final int common_signin_button_text=0x7f0a001f;
-        public static final int common_signin_button_text_long=0x7f0a0020;
+        public static final int common_google_play_services_enable_button=0x7f0a0013;
+        public static final int common_google_play_services_enable_text=0x7f0a0014;
+        public static final int common_google_play_services_enable_title=0x7f0a0015;
+        public static final int common_google_play_services_install_button=0x7f0a0016;
+        public static final int common_google_play_services_install_text_phone=0x7f0a0017;
+        public static final int common_google_play_services_install_text_tablet=0x7f0a0018;
+        public static final int common_google_play_services_install_title=0x7f0a0019;
+        public static final int common_google_play_services_unknown_issue=0x7f0a001a;
+        public static final int common_google_play_services_unsupported_text=0x7f0a001b;
+        public static final int common_google_play_services_unsupported_title=0x7f0a001c;
+        public static final int common_google_play_services_update_button=0x7f0a001d;
+        public static final int common_google_play_services_update_text=0x7f0a001e;
+        public static final int common_google_play_services_update_title=0x7f0a001f;
+        public static final int common_signin_button_text=0x7f0a0020;
+        public static final int common_signin_button_text_long=0x7f0a0021;
         /**  From: file:/home/vincente/git/GlassTimelapse/Android/GlassTimelapse/src/main/res/values/strings.xml 
          */
-        public static final int drawer_close=0x7f0a0021;
-        public static final int drawer_open=0x7f0a0022;
+        public static final int drawer_close=0x7f0a0022;
+        public static final int drawer_open=0x7f0a0023;
         /**  From: file:/home/vincente/git/GlassTimelapse/Android/GlassTimelapse/build/exploded-bundles/ComGoogleAndroidGmsPlayServices3136.aar/res/values/strings.xml 
          */
-        public static final int location_client_ulr_inactive_age_under_13=0x7f0a0023;
-        public static final int location_client_ulr_inactive_age_unknown=0x7f0a0024;
-        public static final int location_client_ulr_inactive_unknown_restriction=0x7f0a0025;
+        public static final int location_client_ulr_inactive_age_under_13=0x7f0a0024;
+        public static final int location_client_ulr_inactive_age_unknown=0x7f0a0025;
+        public static final int location_client_ulr_inactive_unknown_restriction=0x7f0a0026;
         /**  From: file:/home/vincente/git/GlassTimelapse/Android/GlassTimelapse/src/main/res/values/strings.xml 
          */
-        public static final int signinsubtext=0x7f0a0026;
-        public static final int signintext=0x7f0a0027;
+        public static final int signinsubtext=0x7f0a0027;
+        public static final int signintext=0x7f0a0028;
     }
     public static final class style {
         /**  From: file:/home/vincente/git/GlassTimelapse/Android/GlassTimelapse/src/main/res/values/styles_vintagepostcard.xml 

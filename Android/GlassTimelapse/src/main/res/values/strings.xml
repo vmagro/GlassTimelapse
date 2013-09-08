@@ -7,10 +7,10 @@
     <string name="drawer_close">Close</string>
     <string name="signintext">Welcome to the Postcard Office</string>
     <string name="signinsubtext">Sign in to Continue</string>
+    <string name="action_refresh">Refresh</string>
 
     <string-array name="navigation_items">
         <item>News Feed</item>
         <item>My Album</item>
-        <item>Controls</item>
     </string-array>
 </resources>
