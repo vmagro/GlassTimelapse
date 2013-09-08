@@ -103,6 +103,8 @@ public class MainActivity extends Activity {
 		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 		wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK,
 				"Glass Timelapse");
+		
+		openOptionsMenu();
 	}
 
 	@Override
