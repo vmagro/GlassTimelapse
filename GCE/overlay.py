@@ -1,4 +1,4 @@
-from PIL import Image, ImageFilter, ImageDraw, ImageFont
+from PIL import Image, ImageFilter, ImageDraw, ImageFont, ImageOps
 from PIL.ExifTags import TAGS, GPSTAGS
 import urllib, urllib2, cStringIO
 import sys, json, textwrap, os 
@@ -12,12 +12,13 @@ def process(image_file, index, userid, token, eventid):
     width = 164
     height= 252
     zoom = '18'
-    url='http://maps.googleapis.com/maps/api/staticmap?center='+loc_data+'&zoom='+zoom+'&size='+str(width)+'x'+str(height)+'&markers=color:blue%7C'+loc_data+'&sensor=false'
+    url='http://maps.googleapis.com/maps/api/staticmap?center='+loc_data+'&zoom='+zoom+'&size='+str(width)+'x'+str(height)+'&markers=color:blue%7C'+loc_data+'&style=invert_lightness:true|hue:0x00d4ff&sensor=false'
+    print(url)
     mapfile = cStringIO.StringIO(urllib.urlopen(url).read())
     map = Image.open(mapfile)
     map = map.convert('RGBA')
     bands = list(map.split())
-    bands[3] = bands[3].point(lambda x: x*0.5)
+    bands[3] = bands[3].point(lambda x: x*0.6)
     map = Image.merge(map.mode, bands)
     #create city/time tile    
     card = Image.new('RGBA', (273,252), (0,0,0))
@@ -28,7 +29,7 @@ def process(image_file, index, userid, token, eventid):
     hour, min, sec = time.split(':')
     if (hour[0] == '0'):
 	hour = hour[1:]
-    gurl = 'http://maps.googleapis.com/maps/api/geocode/json?latlng='+loc_data+'&sensor=false'
+    gurl = 'http://maps.googleapis.com/maps/api/geocode/json?latlng='+loc_data+'&style=invert_lightness:true|hue:0x00d4ff&sensor=false'
     response = urllib.urlopen(gurl)
     data = json.load(response)
     city =  data['results'][0]['address_components'][1]['long_name']
@@ -40,7 +41,7 @@ def process(image_file, index, userid, token, eventid):
 	y_text += height
     draw.text((20,20), hour+':'+min, (255, 255, 255), font=roboto_45)
     bands = list(card.split())
-    bands[3] = bands[3].point(lambda x: x*0.5)
+    bands[3] = bands[3].point(lambda x: x*0.6)
     card = Image.merge(card.mode, bands)
     imgwidth,imgheight = image.size
     offset=(imgwidth-20-164-273,20)
@@ -70,6 +71,14 @@ def process(image_file, index, userid, token, eventid):
     prof_file = cStringIO.StringIO(urllib.urlopen(profile_url).read())
     profpic = Image.open(prof_file)
     profpic = profpic.convert('RGBA')
+    #circle thumbnail
+    size = (100,100)
+    mask = Image.new('L', size, 0)
+    drawCircle = ImageDraw.Draw(mask)
+    drawCircle.ellipse((0,0)+size, fill=255)
+    profpic = ImageOps.fit(profpic, mask.size, centering=(0.5, 0.5))
+    profpic.putalpha(mask)
+    #transparentize 
     pbands = list(profpic.split())
     pbands[3] = pbands[3].point(lambda x: x*0.7)
     profpic = Image.merge(profpic.mode, pbands)
@@ -87,6 +96,7 @@ def process(image_file, index, userid, token, eventid):
     image.paste(profpic, prof_offset, profpic)
     image.paste(profnamebox, name_offset, profnamebox)
     image.save("glass"+("%05d" % (index))+'.png')
+    return city
 
 def get_exif_data(image):
     exif_data = {}

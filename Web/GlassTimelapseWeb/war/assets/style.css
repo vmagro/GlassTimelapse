@@ -135,10 +135,12 @@ ul#menu li.active {
 
 #content .box.event .img_container {
 	position: absolute;
+	width: 100%;
 	top: 10px;
-	left: 10px;
+	right: 10px;
 	z-index: 1;
 	overflow: hidden;
+	text-align: right;
 }
 #content .box.event .img_container img {
 	height: 100px;
@@ -167,7 +169,6 @@ ul#menu li.active {
 a {
 	color: inherit;
 	text-decoration: none;
-	transition: 0.3s opacity;
 }
 a:hover{
 	opacity: 0.8;

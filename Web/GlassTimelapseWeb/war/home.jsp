@@ -47,15 +47,18 @@
 		$(document).ready(function() {
 			$.getJSON("/events?from=<%=Utils.getCurrentUserId(session)%>", function(data) {
 				$.each(data, function(key, val) {
-					console.log(val);
-					div  = '<div class="box event">';
+					div = ''
+					if (val.youtubeUrl) { div += '<a href="' + val.youtubeUrl +'">'; }
+					div += '<div class="box event">';
 					div += '<h4>';
 					if (val.city) { div += val.city + ', '; }
 					div += val.startTime + '</h4>';
 					div += '<div class="img_container">';
 						div += '<img src="/event?mode=getImage&eventId=' + val.id + '&i=1" />';
 						div += '<img src="/event?mode=getImage&eventId=' + val.id + '&i=2" />';
+						div += '<img src="/event?mode=getImage&eventId=' + val.id + '&i=3" />';
 					div += '</div>';
+					if (val.youtubeUrl) { div += '</a>'; }
 					
 					$("#content").append(div);
 				});
