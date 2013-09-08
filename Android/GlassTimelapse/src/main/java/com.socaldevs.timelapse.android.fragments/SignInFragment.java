@@ -244,7 +244,8 @@ public class SignInFragment extends SherlockFragment implements GooglePlayServic
             while (true) {
                 try {
                     socket = mmServerSocket.accept();
-                } catch (IOException e) {
+                } catch (Exception e) {
+                    e.printStackTrace();
                     break;
                 }
                 // If a connection was accepted

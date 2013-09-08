@@ -1,12 +1,10 @@
 package com.socaldevs.timelapse.android;
 
-import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,14 +41,17 @@ public class PostcardAdapter extends ArrayAdapter<Postcard> {
             row = inflater.inflate(R.layout.postcard_list_item, parent, false);
 
             holder = new PostcardHolder();
-            holder.imgView      = (ImageView) row.findViewById(R.id.postcard_image);
-            holder.userView     = (TextView) row.findViewById(R.id.postcard_user);
-            holder.locationView = (TextView) row.findViewById(R.id.postcard_location);
+            holder.imgView          = (ImageView) row.findViewById(R.id.postcard_image);
+            holder.userView         = (TextView) row.findViewById(R.id.postcard_user);
+            holder.locationView     = (TextView) row.findViewById(R.id.postcard_location);
+            holder.downloadImageSet = false;
 
             if(Build.VERSION.SDK_INT < 16)
                 row.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.big_card));
             else
                 row.setBackground(context.getResources().getDrawable(R.drawable.big_card));
+            holder.imgView.setImageBitmap(BitmapFactory.decodeResource(context.getResources(),
+                    R.drawable.ic_launcher));
 
             row.setTag(holder);
         }
@@ -58,10 +59,18 @@ public class PostcardAdapter extends ArrayAdapter<Postcard> {
             holder = (PostcardHolder)row.getTag();
         }
 
-        Postcard postcard = postcards.get(position);
-        holder.imgView.setImageBitmap(postcard.getPreview());
+        Postcard postcard   = postcards.get(position);
+        holder.videoUrl     = postcard.getVideoUrl();
+        holder.previewUrl   = postcard.getPreviewUrl();
+
         holder.userView.setText(postcard.getUser());
         holder.locationView.setText(postcard.getLocation());
+
+        //If we havn't downloaded the previous preview, lets download it.
+        if(!holder.downloadImageSet){
+            loadImage(holder.imgView, holder.previewUrl);
+            holder.downloadImageSet = true;
+        }
 
         return row;
     }
@@ -73,19 +82,27 @@ public class PostcardAdapter extends ArrayAdapter<Postcard> {
     static class PostcardHolder{
         ImageView imgView;
         TextView userView, locationView;
+        String videoUrl, previewUrl;
+        boolean downloadImageSet;
+    }
+
+    private void loadImage(ImageView iv, String url) {
+        DownloadTask asyncTask = new DownloadTask();
+        asyncTask.execute(iv, url);
     }
 
     class DownloadTask extends AsyncTask<Object,Object, Object> {
         private ImageView iv;
         private InputStream is = null;
-        private Drawable imageDrawable = null;
+        private Bitmap imageDrawable = null;
         @Override
         protected Object doInBackground(Object... params) {
             iv = (ImageView) params[0];
 
             try {
                 is  = new DefaultHttpClient().execute(new HttpPost(params[1].toString())).getEntity().getContent();
-                imageDrawable = Drawable.createFromStream((InputStream)is , "src name");
+                imageDrawable = BitmapFactory.decodeStream(is);
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -94,12 +111,9 @@ public class PostcardAdapter extends ArrayAdapter<Postcard> {
         @Override
         protected void onPostExecute(Object response) {
             super.onPostExecute(response);
-            if(response != null){
-                iv.setImageDrawable((Drawable)response);
+            if(response != null && iv != null){
+                iv.setImageBitmap((Bitmap) response);
             }
-
         }
-
     }
-
 }
