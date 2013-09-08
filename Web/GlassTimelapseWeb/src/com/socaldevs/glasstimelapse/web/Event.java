@@ -31,10 +31,7 @@ public class Event {
 
 	public void end() {
 		this.endTime = new Date();
-	}
-
-	public void endEvent(Date endTime) {
-		this.endTime = endTime;
+		ofy().save().entity(this).now();
 	}
 
 	public boolean hasEnded() {

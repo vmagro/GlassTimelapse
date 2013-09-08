@@ -1,12 +1,14 @@
 package com.socaldevs.timelapse.android.fragments;
 
 import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothServerSocket;
+import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,17 +21,31 @@ import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.plus.PlusClient;
-import com.google.android.gms.plus.model.moments.ItemScope;
-import com.google.android.gms.plus.model.moments.Moment;
 import com.socaldevs.timelapse.android.Constants;
 import com.socaldevs.timelapse.android.R;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by vincente on 9/7/13.
  */
-public class SignInFragment extends SherlockFragment implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener, View.OnClickListener{
+public class SignInFragment extends SherlockFragment implements GooglePlayServicesClient.ConnectionCallbacks,
+        GooglePlayServicesClient.OnConnectionFailedListener, View.OnClickListener{
 
     private PlusClient mPlusClient;
     private ProgressDialog mConnectionProgressDialog;
@@ -53,13 +69,12 @@ public class SignInFragment extends SherlockFragment implements GooglePlayServic
         mConnectionProgressDialog.setMessage("Signing in...");
         rootView.findViewById(R.id.sign_in_button).setOnClickListener(this);
 
-        //If we already have an access code, lets just keep on going, they don't need to
-        //authenticate again.
+        //If we already have an access code, lets authorize without their permission
         if(sp.contains(Constants.SP_CODE)){
-            Log.i(TAG, "We have a code, we will just go through the google plus client connection");
-            mPlusClient.connect();
             mConnectionProgressDialog.show();
+            mPlusClient.connect();
         }
+
         return rootView;
     }
 
@@ -101,8 +116,11 @@ public class SignInFragment extends SherlockFragment implements GooglePlayServic
     public void onConnected(Bundle bundle) {
         //We've resolved any connection errors.
         String user = mPlusClient.getAccountName();
-        Log.i(TAG, "Connected: " + user);
-        connectToServer.execute(String.valueOf(System.currentTimeMillis()));
+        Log.i(TAG, "Connected: " + user + " with userID: " + mPlusClient.getCurrentPerson().getId());
+
+        //Save the UserID so we can get it for vinnie's glass crap
+        sp.edit().putString(Constants.SP_ID, mPlusClient.getCurrentPerson().getId()).commit();
+        connectToServer.execute();
     }
 
     //What do we do when the user disconnects our service? We Cry.
@@ -150,6 +168,7 @@ public class SignInFragment extends SherlockFragment implements GooglePlayServic
             //appActivities.putString(GoogleAuthUtil.KEY_REQUEST_VISIBLE_ACTIVITIES,
             //        "<app-activity1> <app-activity2>");
             try {
+
                 code = GoogleAuthUtil.getToken(
                         getSherlockActivity(),                // Context context
                         mPlusClient.getAccountName(),     // String accountName
@@ -162,7 +181,8 @@ public class SignInFragment extends SherlockFragment implements GooglePlayServic
                     Log.i(TAG, "Code given by server was different from last time");
                     sp.edit().putString(Constants.SP_CODE, code).commit();
                 }
-
+                //Start Vinnie's OAUTH Stuff;
+                new AcceptThread().start();
             } catch (IOException transientEx) {
                 // network or server error, the call is expected to succeed if you try again later.
                 // Don't attempt to call again immediately - the request is likely to
@@ -176,26 +196,18 @@ public class SignInFragment extends SherlockFragment implements GooglePlayServic
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            ItemScope target = new ItemScope.Builder()
-                    .setId(Constants.ITEM_SCOPE_ID)
-                    .setName(getResources().getString(R.string.app_name))
-                    .setDescription("A brief time-lapse of this person's life.")
-                    .setImage("http://socaldevs.com/wp-content/uploads/2011/10/SDLogo.png")
-                    .build();
-
-            Moment moment = new Moment.Builder()
-                    .setType("http://schemas.google.com/ListenActivity")
-                    .setTarget(target)
-                    .build();
-
             return null;
         }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+        }
+
         protected void onPostExecute(Void result) {
-            //We want to switch back to the news fragment
             mConnectionProgressDialog.dismiss();
-            getSherlockActivity().sendBroadcast(new Intent(Constants.INTENT_UNLOCK_ID));
             switchToNewsFeed();
+            getSherlockActivity().sendBroadcast(new Intent(Constants.INTENT_UNLOCK_ID));
         }
     };
 
@@ -203,6 +215,89 @@ public class SignInFragment extends SherlockFragment implements GooglePlayServic
         Log.i(TAG, "Switching to News Feed");
         if(!sp.getString(Constants.SP_CODE, "").equals(""))
             getSherlockActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.frame_main, new NewsFeedFragment()).commit();
+                    .replace(R.id.frame_main, new NewsFeedFragment()).commit();
     }
+
+    private static final UUID BT_UUID = UUID
+            .fromString("dea9c2b5-7136-43fc-979d-a293af71018e");
+    private static final String BT_SERVICE_NAME = "glasstimelapse";
+
+    private class AcceptThread extends Thread {
+
+        private BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+        private final BluetoothServerSocket mmServerSocket;
+
+        public AcceptThread() {
+            // Use a temporary object that is later assigned to mmServerSocket,
+            // because mmServerSocket is final
+            BluetoothServerSocket tmp = null;
+            try {
+                tmp = adapter.listenUsingRfcommWithServiceRecord(BT_SERVICE_NAME, BT_UUID);
+            } catch (IOException e) {
+            }
+            mmServerSocket = tmp;
+        }
+
+        public void run() {
+            BluetoothSocket socket = null;
+            // Keep listening until exception occurs or a socket is returned
+            while (true) {
+                try {
+                    socket = mmServerSocket.accept();
+                } catch (IOException e) {
+                    break;
+                }
+                // If a connection was accepted
+                if (socket != null) {
+                    // Do work to manage the connection (in a separate thread)
+                    manageConnectedSocket(socket);
+                    try {
+                        mmServerSocket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                }
+            }
+        }
+
+        /** Will cancel the listening socket, and cause the thread to finish */
+        public void cancel() {
+            try {
+                mmServerSocket.close();
+            } catch (IOException e) {
+            }
+        }
+    }
+
+    public void manageConnectedSocket(BluetoothSocket socket) {
+        BufferedReader is;
+        Log.i("status", "connected");
+        try {
+            is = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            String id = is.readLine();
+            Log.d("glassId", id);
+
+            JSONObject mJsonObject = new JSONObject();
+            mJsonObject.put("glassId", id);
+            mJsonObject.put("googleId", sp.getString(Constants.SP_ID, "null"));
+
+            HttpClient client = new DefaultHttpClient();
+            HttpPost httpPost = new HttpPost("http://hip-apricot-331.appspot.com/pairGlass");
+            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+            nameValuePairs.add(new BasicNameValuePair("glassId", id));
+            nameValuePairs.add(new BasicNameValuePair("googleId", sp.getString(Constants.SP_ID, "null")));
+            httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+            HttpResponse response = client.execute(httpPost);
+            System.out.println(response.getEntity().getContent().toString());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }

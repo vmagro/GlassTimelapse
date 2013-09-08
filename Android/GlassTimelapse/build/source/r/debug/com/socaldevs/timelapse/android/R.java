@@ -815,40 +815,43 @@ containing a value of this type.
         public static final int abs__bright_foreground_disabled_holo_light=0x7f060003;
         public static final int abs__bright_foreground_holo_dark=0x7f060004;
         public static final int abs__bright_foreground_holo_light=0x7f060005;
-        public static final int abs__primary_text_disable_only_holo_dark=0x7f060018;
-        public static final int abs__primary_text_disable_only_holo_light=0x7f060019;
-        public static final int abs__primary_text_holo_dark=0x7f06001a;
-        public static final int abs__primary_text_holo_light=0x7f06001b;
+        public static final int abs__primary_text_disable_only_holo_dark=0x7f06001b;
+        public static final int abs__primary_text_disable_only_holo_light=0x7f06001c;
+        public static final int abs__primary_text_holo_dark=0x7f06001d;
+        public static final int abs__primary_text_holo_light=0x7f06001e;
         /**  From: file:/home/vincente/git/GlassTimelapse/Android/GlassTimelapse/src/main/res/values/colors.xml 
          */
         public static final int almost_white=0x7f060006;
+        public static final int card_shadow=0x7f060007;
+        public static final int card_white=0x7f060008;
         /**  From: file:/home/vincente/git/GlassTimelapse/Android/GlassTimelapse/build/exploded-bundles/ComGoogleAndroidGmsPlayServices3136.aar/res/values/colors.xml 
          */
-        public static final int common_action_bar_splitter=0x7f060007;
-        public static final int common_signin_btn_dark_text_default=0x7f060008;
-        public static final int common_signin_btn_dark_text_disabled=0x7f060009;
-        public static final int common_signin_btn_dark_text_focused=0x7f06000a;
-        public static final int common_signin_btn_dark_text_pressed=0x7f06000b;
-        public static final int common_signin_btn_default_background=0x7f06000c;
-        public static final int common_signin_btn_light_text_default=0x7f06000d;
-        public static final int common_signin_btn_light_text_disabled=0x7f06000e;
-        public static final int common_signin_btn_light_text_focused=0x7f06000f;
-        public static final int common_signin_btn_light_text_pressed=0x7f060010;
-        public static final int common_signin_btn_text_dark=0x7f06001c;
-        public static final int common_signin_btn_text_light=0x7f06001d;
+        public static final int common_action_bar_splitter=0x7f060009;
+        public static final int common_signin_btn_dark_text_default=0x7f06000a;
+        public static final int common_signin_btn_dark_text_disabled=0x7f06000b;
+        public static final int common_signin_btn_dark_text_focused=0x7f06000c;
+        public static final int common_signin_btn_dark_text_pressed=0x7f06000d;
+        public static final int common_signin_btn_default_background=0x7f06000e;
+        public static final int common_signin_btn_light_text_default=0x7f06000f;
+        public static final int common_signin_btn_light_text_disabled=0x7f060010;
+        public static final int common_signin_btn_light_text_focused=0x7f060011;
+        public static final int common_signin_btn_light_text_pressed=0x7f060012;
+        public static final int common_signin_btn_text_dark=0x7f06001f;
+        public static final int common_signin_btn_text_light=0x7f060020;
         /**  From: file:/home/vincente/git/GlassTimelapse/Android/GlassTimelapse/src/main/res/values/colors.xml 
          */
-        public static final int fields=0x7f060011;
-        public static final int light_grey=0x7f060012;
-        public static final int light_vintage_orange=0x7f060013;
+        public static final int fields=0x7f060013;
+        public static final int light_grey=0x7f060014;
+        public static final int light_vintage_orange=0x7f060015;
         /**  From: file:/home/vincente/git/GlassTimelapse/Android/GlassTimelapse/src/main/res/values/colors_vintagepostcard.xml 
          */
-        public static final int pressed_vintagepostcard=0x7f060014;
+        public static final int pressed_vintagepostcard=0x7f060016;
         /**  From: file:/home/vincente/git/GlassTimelapse/Android/GlassTimelapse/src/main/res/values/colors.xml 
          */
-        public static final int vintage_blue=0x7f060015;
-        public static final int vintage_brown=0x7f060016;
-        public static final int vintage_orange=0x7f060017;
+        public static final int second_grey=0x7f060017;
+        public static final int vintage_blue=0x7f060018;
+        public static final int vintage_brown=0x7f060019;
+        public static final int vintage_orange=0x7f06001a;
     }
     public static final class dimen {
         /**  From: file:/home/vincente/git/GlassTimelapse/Android/GlassTimelapse/build/exploded-bundles/ComActionbarsherlockActionbarsherlock440.aar/res/values-land/values.xml 
@@ -998,64 +1001,65 @@ containing a value of this type.
         public static final int abs__textfield_searchview_right_holo_dark=0x7f020073;
         public static final int abs__textfield_searchview_right_holo_light=0x7f020074;
         public static final int abs__toast_frame=0x7f020075;
-        public static final int btn_cab_done_default_vintagepostcard=0x7f020076;
-        public static final int btn_cab_done_focused_vintagepostcard=0x7f020077;
-        public static final int btn_cab_done_pressed_vintagepostcard=0x7f020078;
-        public static final int btn_cab_done_vintagepostcard=0x7f020079;
-        public static final int cab_background_bottom_vintagepostcard=0x7f02007a;
-        public static final int cab_background_top_vintagepostcard=0x7f02007b;
-        public static final int common_signin_btn_icon_dark=0x7f02007c;
-        public static final int common_signin_btn_icon_disabled_dark=0x7f02007d;
-        public static final int common_signin_btn_icon_disabled_focus_dark=0x7f02007e;
-        public static final int common_signin_btn_icon_disabled_focus_light=0x7f02007f;
-        public static final int common_signin_btn_icon_disabled_light=0x7f020080;
-        public static final int common_signin_btn_icon_focus_dark=0x7f020081;
-        public static final int common_signin_btn_icon_focus_light=0x7f020082;
-        public static final int common_signin_btn_icon_light=0x7f020083;
-        public static final int common_signin_btn_icon_normal_dark=0x7f020084;
-        public static final int common_signin_btn_icon_normal_light=0x7f020085;
-        public static final int common_signin_btn_icon_pressed_dark=0x7f020086;
-        public static final int common_signin_btn_icon_pressed_light=0x7f020087;
-        public static final int common_signin_btn_text_dark=0x7f020088;
-        public static final int common_signin_btn_text_disabled_dark=0x7f020089;
-        public static final int common_signin_btn_text_disabled_focus_dark=0x7f02008a;
-        public static final int common_signin_btn_text_disabled_focus_light=0x7f02008b;
-        public static final int common_signin_btn_text_disabled_light=0x7f02008c;
-        public static final int common_signin_btn_text_focus_dark=0x7f02008d;
-        public static final int common_signin_btn_text_focus_light=0x7f02008e;
-        public static final int common_signin_btn_text_light=0x7f02008f;
-        public static final int common_signin_btn_text_normal_dark=0x7f020090;
-        public static final int common_signin_btn_text_normal_light=0x7f020091;
-        public static final int common_signin_btn_text_pressed_dark=0x7f020092;
-        public static final int common_signin_btn_text_pressed_light=0x7f020093;
-        public static final int drawer_shadow=0x7f020094;
-        public static final int ic_drawer=0x7f020095;
-        public static final int ic_launcher=0x7f020096;
-        public static final int list_focused_vintagepostcard=0x7f020097;
-        public static final int menu_dropdown_panel_vintagepostcard=0x7f020098;
-        public static final int pressed_background_vintagepostcard=0x7f020099;
-        public static final int progress_bg_vintagepostcard=0x7f02009a;
-        public static final int progress_horizontal_vintagepostcard=0x7f02009b;
-        public static final int progress_primary_vintagepostcard=0x7f02009c;
-        public static final int progress_secondary_vintagepostcard=0x7f02009d;
-        public static final int roboto_italic=0x7f02009e;
-        public static final int roboto_light=0x7f02009f;
-        public static final int roboto_regular=0x7f0200a0;
-        public static final int roboto_thin=0x7f0200a1;
-        public static final int roboto_thinitalic=0x7f0200a2;
-        public static final int selectable_background_vintagepostcard=0x7f0200a3;
-        public static final int spinner_ab_default_vintagepostcard=0x7f0200a4;
-        public static final int spinner_ab_disabled_vintagepostcard=0x7f0200a5;
-        public static final int spinner_ab_focused_vintagepostcard=0x7f0200a6;
-        public static final int spinner_ab_pressed_vintagepostcard=0x7f0200a7;
-        public static final int spinner_background_ab_vintagepostcard=0x7f0200a8;
-        public static final int tab_indicator_ab_vintagepostcard=0x7f0200a9;
-        public static final int tab_selected_focused_vintagepostcard=0x7f0200aa;
-        public static final int tab_selected_pressed_vintagepostcard=0x7f0200ab;
-        public static final int tab_selected_vintagepostcard=0x7f0200ac;
-        public static final int tab_unselected_focused_vintagepostcard=0x7f0200ad;
-        public static final int tab_unselected_pressed_vintagepostcard=0x7f0200ae;
-        public static final int tab_unselected_vintagepostcard=0x7f0200af;
+        public static final int big_card=0x7f020076;
+        public static final int btn_cab_done_default_vintagepostcard=0x7f020077;
+        public static final int btn_cab_done_focused_vintagepostcard=0x7f020078;
+        public static final int btn_cab_done_pressed_vintagepostcard=0x7f020079;
+        public static final int btn_cab_done_vintagepostcard=0x7f02007a;
+        public static final int cab_background_bottom_vintagepostcard=0x7f02007b;
+        public static final int cab_background_top_vintagepostcard=0x7f02007c;
+        public static final int common_signin_btn_icon_dark=0x7f02007d;
+        public static final int common_signin_btn_icon_disabled_dark=0x7f02007e;
+        public static final int common_signin_btn_icon_disabled_focus_dark=0x7f02007f;
+        public static final int common_signin_btn_icon_disabled_focus_light=0x7f020080;
+        public static final int common_signin_btn_icon_disabled_light=0x7f020081;
+        public static final int common_signin_btn_icon_focus_dark=0x7f020082;
+        public static final int common_signin_btn_icon_focus_light=0x7f020083;
+        public static final int common_signin_btn_icon_light=0x7f020084;
+        public static final int common_signin_btn_icon_normal_dark=0x7f020085;
+        public static final int common_signin_btn_icon_normal_light=0x7f020086;
+        public static final int common_signin_btn_icon_pressed_dark=0x7f020087;
+        public static final int common_signin_btn_icon_pressed_light=0x7f020088;
+        public static final int common_signin_btn_text_dark=0x7f020089;
+        public static final int common_signin_btn_text_disabled_dark=0x7f02008a;
+        public static final int common_signin_btn_text_disabled_focus_dark=0x7f02008b;
+        public static final int common_signin_btn_text_disabled_focus_light=0x7f02008c;
+        public static final int common_signin_btn_text_disabled_light=0x7f02008d;
+        public static final int common_signin_btn_text_focus_dark=0x7f02008e;
+        public static final int common_signin_btn_text_focus_light=0x7f02008f;
+        public static final int common_signin_btn_text_light=0x7f020090;
+        public static final int common_signin_btn_text_normal_dark=0x7f020091;
+        public static final int common_signin_btn_text_normal_light=0x7f020092;
+        public static final int common_signin_btn_text_pressed_dark=0x7f020093;
+        public static final int common_signin_btn_text_pressed_light=0x7f020094;
+        public static final int drawer_shadow=0x7f020095;
+        public static final int ic_drawer=0x7f020096;
+        public static final int ic_launcher=0x7f020097;
+        public static final int list_focused_vintagepostcard=0x7f020098;
+        public static final int menu_dropdown_panel_vintagepostcard=0x7f020099;
+        public static final int pressed_background_vintagepostcard=0x7f02009a;
+        public static final int progress_bg_vintagepostcard=0x7f02009b;
+        public static final int progress_horizontal_vintagepostcard=0x7f02009c;
+        public static final int progress_primary_vintagepostcard=0x7f02009d;
+        public static final int progress_secondary_vintagepostcard=0x7f02009e;
+        public static final int roboto_italic=0x7f02009f;
+        public static final int roboto_light=0x7f0200a0;
+        public static final int roboto_regular=0x7f0200a1;
+        public static final int roboto_thin=0x7f0200a2;
+        public static final int roboto_thinitalic=0x7f0200a3;
+        public static final int selectable_background_vintagepostcard=0x7f0200a4;
+        public static final int spinner_ab_default_vintagepostcard=0x7f0200a5;
+        public static final int spinner_ab_disabled_vintagepostcard=0x7f0200a6;
+        public static final int spinner_ab_focused_vintagepostcard=0x7f0200a7;
+        public static final int spinner_ab_pressed_vintagepostcard=0x7f0200a8;
+        public static final int spinner_background_ab_vintagepostcard=0x7f0200a9;
+        public static final int tab_indicator_ab_vintagepostcard=0x7f0200aa;
+        public static final int tab_selected_focused_vintagepostcard=0x7f0200ab;
+        public static final int tab_selected_pressed_vintagepostcard=0x7f0200ac;
+        public static final int tab_selected_vintagepostcard=0x7f0200ad;
+        public static final int tab_unselected_focused_vintagepostcard=0x7f0200ae;
+        public static final int tab_unselected_pressed_vintagepostcard=0x7f0200af;
+        public static final int tab_unselected_vintagepostcard=0x7f0200b0;
     }
     public static final class id {
         public static final int abs__action_bar=0x7f070024;
@@ -1099,7 +1103,7 @@ containing a value of this type.
         public static final int abs__textButton=0x7f070017;
         public static final int abs__title=0x7f07001f;
         public static final int abs__up=0x7f070013;
-        public static final int action_settings=0x7f07003c;
+        public static final int action_settings=0x7f070040;
         public static final int disableHome=0x7f07000c;
         public static final int drawer_layout=0x7f070036;
         public static final int edit_query=0x7f07002a;
@@ -1108,17 +1112,21 @@ containing a value of this type.
         public static final int hybrid=0x7f070004;
         public static final int left_drawer=0x7f070038;
         public static final int listMode=0x7f070005;
+        public static final int newsFeedListView=0x7f070039;
         public static final int none=0x7f070000;
         public static final int normal=0x7f070001;
+        public static final int postcard_image=0x7f07003d;
+        public static final int postcard_location=0x7f07003f;
+        public static final int postcard_user=0x7f07003e;
         public static final int satellite=0x7f070002;
         public static final int showCustom=0x7f07000b;
         public static final int showHome=0x7f070008;
         public static final int showTitle=0x7f07000a;
-        public static final int sign_in_button=0x7f070039;
+        public static final int sign_in_button=0x7f07003a;
         public static final int tabMode=0x7f070006;
         public static final int terrain=0x7f070003;
-        public static final int textView=0x7f07003a;
-        public static final int textView2=0x7f07003b;
+        public static final int textView=0x7f07003b;
+        public static final int textView2=0x7f07003c;
         public static final int useLogo=0x7f070007;
         public static final int wrap_content=0x7f07000d;
     }
@@ -1158,8 +1166,9 @@ containing a value of this type.
         public static final int fragment_newsfeed=0x7f030019;
         public static final int fragment_settings=0x7f03001a;
         public static final int fragment_signin=0x7f03001b;
-        public static final int sherlock_spinner_dropdown_item=0x7f03001c;
-        public static final int sherlock_spinner_item=0x7f03001d;
+        public static final int postcard_list_item=0x7f03001c;
+        public static final int sherlock_spinner_dropdown_item=0x7f03001d;
+        public static final int sherlock_spinner_item=0x7f03001e;
     }
     public static final class menu {
         public static final int main=0x7f0c0000;
