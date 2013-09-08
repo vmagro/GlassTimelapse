@@ -1,5 +1,7 @@
 package com.socaldevs.glasstimelapse.web;
 
+import static com.googlecode.objectify.ObjectifyService.ofy;
+
 import com.google.gson.annotations.Expose;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
@@ -18,6 +20,10 @@ public class User extends Jsonifiable {
 	@Expose
 	@Index
 	public String glassId;
+	@Expose
+	@Index
+	public String youtubeSessionToken;
+
 	@Expose
 	@Index
 	public String googleUserId;
@@ -114,6 +120,11 @@ public class User extends Jsonifiable {
 
 	public void setGoogleExpiresIn(Long googleExpiresIn) {
 		this.googleExpiresIn = googleExpiresIn;
+	}
+
+	public void setAndUpdateYoutubeToken(String youtubeToken) {
+		this.youtubeSessionToken = youtubeToken;
+		ofy().save().entity(this).now();
 	}
 
 }
