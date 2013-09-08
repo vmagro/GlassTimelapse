@@ -1,9 +1,18 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ include file="header.jsp" %>
-	<div id="welcome">
-		<h2>Home</h2>
-		<p class="desc"><i>Some App Name</i> uses your Glass to capture your experiences automatically for you, and shares its best moments with your friends.</p>
+	<div class="center">
+		<ul id="menu">
+			<li>New Stuff</li>
+			<li>My Timelapses</li>
+		</ul>
+		<div id="content">
+			<div id="home-welcome">
+				<h2>Home</h2>
+				<p class="desc">It doesn't seem like you have paired a Glass yet. </p>
+			</div>
+		</div>
+		<div class="clear"></div>
 	</div>
 </body>
 </html>
