@@ -29,7 +29,6 @@ public class EndEventRequest {
 		this.youtubeToken = user.youtubeSessionToken;
 
 		this.images = new ArrayList<String>();
-		System.out.println(this.eventId);
 		List<Image> images = ofy().load().type(Image.class).filter("eventId", this.eventId).order("index").list();
 		for(Image image : images) {
 			// this.images.add(image.imageKey.toString());

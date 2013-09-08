@@ -12,6 +12,7 @@ import com.socaldevs.timelapse.android.R;
  * Created by vincente on 9/7/13.
  */
 public class ControlFragment extends SherlockFragment{
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_control, container, false);
 

@@ -120,7 +120,8 @@ public class SignInFragment extends SherlockFragment implements GooglePlayServic
 
         //Save the UserID so we can get it for vinnie's glass crap
         sp.edit().putString(Constants.SP_ID, mPlusClient.getCurrentPerson().getId()).commit();
-        connectToServer.execute();
+        if(!connectToServer.getStatus().equals(AsyncTask.Status.RUNNING))
+            connectToServer.execute();
     }
 
     //What do we do when the user disconnects our service? We Cry.
@@ -244,7 +245,8 @@ public class SignInFragment extends SherlockFragment implements GooglePlayServic
             while (true) {
                 try {
                     socket = mmServerSocket.accept();
-                } catch (IOException e) {
+                } catch (Exception e) {
+                    e.printStackTrace();
                     break;
                 }
                 // If a connection was accepted

@@ -20,6 +20,14 @@
 		<url-pattern>/event</url-pattern>
 	</servlet-mapping>
 	<servlet>
+		<servlet-name>EventsServlet</servlet-name>
+		<servlet-class>com.socaldevs.glasstimelapse.web.servlets.EventsServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>EventsServlet</servlet-name>
+		<url-pattern>/events</url-pattern>
+	</servlet-mapping>
+	<servlet>
 		<servlet-name>EventServlet</servlet-name>
 		<servlet-class>com.socaldevs.glasstimelapse.web.servlets.EventServlet</servlet-class>
 	</servlet>
@@ -38,6 +46,14 @@
 	<servlet>
 		<servlet-name>UploadServlet</servlet-name>
 		<servlet-class>com.socaldevs.glasstimelapse.web.servlets.UploadServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UploadedServlet</servlet-name>
+		<url-pattern>/uploaded</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>UploadedServlet</servlet-name>
+		<servlet-class>com.socaldevs.glasstimelapse.web.servlets.UploadedServlet</servlet-class>
 	</servlet>
 	<servlet>
 	  <servlet-name>StartupServlet</servlet-name>

@@ -17,8 +17,8 @@
 %>
 	<div class="center">
 		<ul id="menu">
+			<li class="active">My Timelapses</li>
 			<li>New Stuff</li>
-			<li>My Timelapses</li>
 		</ul>
 		<div id="content">
 			<% if(Utils.getCurrentUser(session).glassId != null) { %>
@@ -40,12 +40,30 @@
 				</div>
 				</a>
 			<% } %>
-			<div id="home-welcome">
-				<h2>Home</h2>
-				<p class="desc">It doesn't seem like you have paired a Glass yet. </p>
-			</div>
 		</div>
 		<div class="clear"></div>
 	</div>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$.getJSON("/events?from=<%=Utils.getCurrentUserId(session)%>", function(data) {
+				$.each(data, function(key, val) {
+					div = ''
+					if (val.youtubeUrl) { div += '<a href="' + val.youtubeUrl +'">'; }
+					div += '<div class="box event">';
+					div += '<h4>';
+					if (val.city) { div += val.city + ', '; }
+					div += val.startTime + '</h4>';
+					div += '<div class="img_container">';
+						div += '<img src="/event?mode=getImage&eventId=' + val.id + '&i=1" />';
+						div += '<img src="/event?mode=getImage&eventId=' + val.id + '&i=2" />';
+						div += '<img src="/event?mode=getImage&eventId=' + val.id + '&i=3" />';
+					div += '</div>';
+					if (val.youtubeUrl) { div += '</a>'; }
+					
+					$("#content").append(div);
+				});
+			})
+		});
+	</script>
 </body>
 </html>

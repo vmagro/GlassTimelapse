@@ -7,14 +7,15 @@ import android.graphics.Bitmap;
  */
 public class Postcard {
 
-    private Bitmap preview;
-    private String user, location, videoUrl;
+    private String user, location, videoUrl, previewUrl;
+    private Bitmap previewBitMap;
 
-    public Postcard(Bitmap preview, String user, String location, String videoUrl){
-        this.preview    = preview;
+    public Postcard(String user, String location, String videoUrl, String preview){
+        this.previewUrl = preview;
         this.user       = user;
         this.location   = location;
         this.videoUrl   = videoUrl;
+        this.previewBitMap = null;
     }
 
     public String getUser() {
@@ -25,11 +26,19 @@ public class Postcard {
         return location;
     }
 
-    public Bitmap getPreview() {
-        return preview;
+    public String getPreviewUrl() {
+        return previewUrl;
     }
 
     public String getVideoUrl() {
         return videoUrl;
+    }
+
+    public Bitmap getPreviewBitMap() {
+        return previewBitMap;
+    }
+
+    public void setPreviewBitMap(Bitmap previewBitMap) {
+        this.previewBitMap = previewBitMap;
     }
 }
