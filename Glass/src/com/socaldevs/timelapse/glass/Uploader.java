@@ -20,10 +20,10 @@ import android.util.Log;
 public class Uploader extends AsyncTask<byte[], Void, Void> {
 
 	private int index = 0;
-	private int eventId = 0;
+	private String eventId = null;
 	private Context ctx;
 
-	public Uploader(Context ctx, int eventId, int index) {
+	public Uploader(Context ctx, String eventId, int index) {
 		this.ctx = ctx;
 		this.eventId = eventId;
 		this.index = index;

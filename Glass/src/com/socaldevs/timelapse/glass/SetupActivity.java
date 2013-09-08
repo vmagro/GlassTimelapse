@@ -94,6 +94,7 @@ public class SetupActivity extends Activity {
 	public void goToMain(){
 		Intent i = new Intent(this, MainActivity.class);
 		startActivity(i);
+		finish();
 	}
 
 	public void setError() {
