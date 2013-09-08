@@ -1,14 +1,14 @@
 package com.socaldevs.timelapse.glass;
 
-import java.io.DataInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.Activity;
@@ -45,7 +45,7 @@ public class MainActivity extends Activity {
 	private DecimalFormat formatter = new DecimalFormat("00000");
 	private static int picNum = 0;
 
-	private int eventId = -1;
+	private String eventId = null;
 
 	private PictureCallback mPicture = new PictureCallback() {
 
@@ -66,7 +66,7 @@ public class MainActivity extends Activity {
 			// e.printStackTrace();
 			// }
 
-			if (eventId == -1)
+			if (eventId == null)
 				return;
 
 			Uploader uploader = new Uploader(MainActivity.this, eventId, picNum);
@@ -103,6 +103,8 @@ public class MainActivity extends Activity {
 		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 		wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK,
 				"Glass Timelapse");
+		
+		openOptionsMenu();
 	}
 
 	@Override
@@ -146,22 +148,25 @@ public class MainActivity extends Activity {
 		Log.i("status", "acquired wakelock");
 		running = true;
 
-		new AsyncTask<Void, Void, Integer>() {
+		new AsyncTask<Void, Void, String>() {
 
 			@Override
-			protected Integer doInBackground(Void... params) {
-				int event = -1;
+			protected String doInBackground(Void... params) {
+				String event = null;
 				String id = Secure.getString(
 						MainActivity.this.getContentResolver(),
 						Secure.ANDROID_ID);
 
 				try {
 					HttpClient cli = new DefaultHttpClient();
-					HttpGet get = new HttpGet(Constants.EVENT_URL + "?mode=new&glassId="+id);
-					Log.i("event url", Constants.EVENT_URL + "?mode=new&glassId="+id);
-					DataInputStream dis = new DataInputStream(cli.execute(get).getEntity().getContent());
-					event = dis.readInt();
-					Log.i("event id", ""+event);
+					HttpPost post = new HttpPost(Constants.EVENT_URL
+							+ "?mode=new&glassId=" + id);
+					Log.i("event url", Constants.EVENT_URL
+							+ "?mode=new&glassId=" + id);
+					BufferedReader reader = new BufferedReader(new InputStreamReader(cli.execute(post)
+							.getEntity().getContent()));
+					event = reader.readLine();
+					Log.i("event id", "" + event);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -170,7 +175,7 @@ public class MainActivity extends Activity {
 			}
 
 			@Override
-			protected void onPostExecute(Integer result) {
+			protected void onPostExecute(String result) {
 				MainActivity.this.eventId = result;
 
 				handler.postDelayed(new Runnable() {
@@ -189,8 +194,45 @@ public class MainActivity extends Activity {
 
 	private void stop() {
 		running = false;
-		wakeLock.release();
-		Log.i("status", "released wakelock");
+		
+		handler.postDelayed(new Runnable(){
+
+			@Override
+			public void run() {
+				new AsyncTask<Void, Void, Void>(){
+
+					@Override
+					protected Void doInBackground(Void... params) {
+						Log.i("event", "canceling event "+eventId);
+						String id = Secure.getString(MainActivity.this.getContentResolver(),
+								Secure.ANDROID_ID);
+
+						HttpClient cli = new DefaultHttpClient();
+						HttpPost post = new HttpPost(Constants.EVENT_URL + "?mode=end&glassId="
+								+ id + "&eventId=" + eventId);
+						
+						try {
+							cli.execute(post).getEntity().consumeContent();
+						} catch (ClientProtocolException e) {
+							e.printStackTrace();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+
+						try {
+							wakeLock.release();
+							Log.i("status", "released wakelock");
+						} catch (Exception ex) {
+							Log.e("wakelock", "error releasing wakelock, proceeding normally");
+						}
+						MainActivity.this.finish();
+						return null;
+					}
+					
+				}.execute();
+			}
+			
+		}, 20000); //wait 20 seconds to make sure that the last image is uploaded
 	}
 
 	private void takePicture() {

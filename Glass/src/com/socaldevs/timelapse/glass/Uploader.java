@@ -1,22 +1,29 @@
 package com.socaldevs.timelapse.glass;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONObject;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.provider.Settings.Secure;
+import android.util.Log;
 
 public class Uploader extends AsyncTask<byte[], Void, Void> {
 
 	private int index = 0;
-	private int eventId = 0;
+	private String eventId = null;
 	private Context ctx;
 
-	public Uploader(Context ctx, int eventId, int index) {
+	public Uploader(Context ctx, String eventId, int index) {
 		this.ctx = ctx;
 		this.eventId = eventId;
 		this.index = index;
@@ -28,20 +35,27 @@ public class Uploader extends AsyncTask<byte[], Void, Void> {
 				Secure.ANDROID_ID);
 		
 		try {
-			JSONObject json = new JSONObject();
-			json.put("glassId", id);
-			json.put("eventId", eventId);
-			json.put("index", index);
-			json.put("image", params[0]);
-			
-			byte[] bytes = json.toString().getBytes();
-			
-			
 			HttpClient cli = new DefaultHttpClient();
 			
-			HttpPost post = new HttpPost(Constants.UPLOAD_URL);
-			ByteArrayEntity entity = new ByteArrayEntity(bytes);
-			post.setEntity(entity);
+			HttpGet get = new HttpGet(Constants.UPLOAD_URL);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(cli.execute(get).getEntity().getContent()));
+			String upload = reader.readLine();
+			Log.i("upload url", upload);
+			
+			HttpPost post = new HttpPost(upload);
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+		    reqEntity.addPart("glassId", new StringBody(id));
+		    reqEntity.addPart("eventId",new StringBody(""+eventId));
+		    reqEntity.addPart("index", new StringBody(""+index));
+		    try{
+		        ByteArrayBody bab = new ByteArrayBody(params[0], "image/jpeg", "image");
+		        reqEntity.addPart("image", bab);
+		    }
+		    catch(Exception e){
+		        //Log.v("Exception in Image", ""+e);
+		        reqEntity.addPart("image", new StringBody(""));
+		    }
+		    post.setEntity(reqEntity);   
 			
 			cli.execute(post);
 			

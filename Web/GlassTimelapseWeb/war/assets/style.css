@@ -104,23 +104,34 @@ ul#menu li.active {
 }
 
 #content .box {
-	background: #cbbd9a;
-	background-image: url('glass.png');
-	background-repeat: no-repeat;
-	padding: 10px 0 10px 120px;
+	padding: 10px 20px 10px 120px;
 	height: 70px;
 	border-box: box-sizing;
 	text-align: left;
 	text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+	margin-bottom: 10px;
 }
 
-#content .glass h4 {
+#content .box.glass {
+	background: #cbbd9a;
+	background-image: url('glass.png');
+	background-repeat: no-repeat;
+}
+
+#content .box.youtube {
+	background: #e3282b;
+	background-image: url('youtube.png');
+	background-repeat: no-repeat;
+}
+
+#content .glass h4, #content .youtube h4 {
 	margin: 0;
 	padding: 0;
 	font-size: 25px;
 	font-weight: 300;
 }
-#content .glass p {
+#content .glass p, #content .youtube p{
+	font-size: 14px;
 	margin: 0;
 	padding: 0;
 	opacity: 0.8;
@@ -128,4 +139,13 @@ ul#menu li.active {
 
 .clear {
 	clear: both;
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+	transition: 0.3s opacity;
+}
+a:hover{
+	opacity: 0.8;
 }
