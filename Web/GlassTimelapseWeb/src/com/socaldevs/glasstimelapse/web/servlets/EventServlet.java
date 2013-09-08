@@ -2,9 +2,9 @@ package com.socaldevs.glasstimelapse.web.servlets;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
@@ -18,7 +18,6 @@ import com.googlecode.objectify.Key;
 import com.socaldevs.glasstimelapse.web.EndEventRequest;
 import com.socaldevs.glasstimelapse.web.Event;
 import com.socaldevs.glasstimelapse.web.User;
-import com.socaldevs.glasstimelapse.web.Utils;
 
 public class EventServlet extends HttpServlet {
 	/*
@@ -46,39 +45,40 @@ public class EventServlet extends HttpServlet {
 			}
 
 		} else if (mode.equals("end")) {
-			if (Utils.isUserLoggedIn(req.getSession())) {
-				Long userId = Utils.getCurrentUserId(req.getSession());
-				Event event = ofy().load().type(Event.class)
-						.filter("userId", userId)
-						.order("-startTime")
-						.first().now();
+			String glassId = req.getParameter("glassId");
+			String eventId = req.getParameter("eventId");
+			Event event = ofy().load().type(Event.class).id(Long.valueOf(eventId)).now();
 
-				// check if event has ended
-				if(!event.hasEnded()) {
-					// end this event
-					event.end();
-					EndEventRequest request = new EndEventRequest(event);
-					Gson gson = new Gson();
-					resp.getWriter().println(gson.toJson(request));
+			// check if event has ended
+			if(!event.hasEnded()) {
+				// end this event
+				event.end();
+				EndEventRequest request = new EndEventRequest(event);
+				Gson gson = new Gson();
+				resp.getWriter().println(gson.toJson(request));
 
-					try {
-						URL url = new URL("http://173.255.121.241/create");
-						BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-						String line;
+				try {
+					URL url = new URL("http://173.255.121.241/create");
+					HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+					connection.setDoOutput(true);
+					connection.setRequestMethod("POST");
 
-						while ((line = reader.readLine()) != null) {
-							// ...
-						}
-						reader.close();
+					OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+					writer.write(gson.toJson(request));
+					writer.close();
 
-					} catch (MalformedURLException e) {
-						// ...
-					} catch (IOException e) {
-						// ...
+					if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+						// OK
+					} else {
+						// Server returned HTTP error code.
 					}
-				} else {
-					// error, no open events
+				} catch (MalformedURLException e) {
+					// ...
+				} catch (IOException e) {
+					// ...
 				}
+			} else {
+				// error, no open events
 			}
 		}
 

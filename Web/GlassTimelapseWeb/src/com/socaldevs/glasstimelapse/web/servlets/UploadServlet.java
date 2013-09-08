@@ -43,6 +43,9 @@ public class UploadServlet extends HttpServlet {
 	 * required: mode ("getUploadUrl")
 	 */
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		resp.getWriter().println(blobstoreService.createUploadUrl("/upload"));
+		String mode = req.getParameter("mode");
+		if (mode != null && mode.equals("getUploadUrl")) {
+			resp.getWriter().println(blobstoreService.createUploadUrl("/upload"));
+		}
 	}
 }
