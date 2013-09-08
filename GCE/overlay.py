@@ -1,9 +1,9 @@
 from PIL import Image, ImageFilter, ImageDraw, ImageFont
 from PIL.ExifTags import TAGS, GPSTAGS
 import urllib, cStringIO
-import sys, json, textwrap 
+import sys, json, textwrap, os 
 
-def process(image_file, index):
+def process(image_file, index, userid, token, eventid):
     #open original image
     image = Image.open(image_file)
     exif_data = get_exif_data(image)
@@ -21,8 +21,8 @@ def process(image_file, index):
     map = Image.merge(map.mode, bands)
     #create city/time tile    
     card = Image.new('RGBA', (273,252), (0,0,0))
-    roboto_30 = ImageFont.truetype("/var/www/Roboto-Light.ttf", 30)
-    roboto_45 = ImageFont.truetype("/var/www/Roboto-Light.ttf", 45)
+    roboto_30 = ImageFont.truetype("/home/david/GlassTimelapse/GCE/Roboto-Light.ttf", 30)
+    roboto_45 = ImageFont.truetype("/home/david/GlassTimelapse/GCE/Roboto-Light.ttf", 45)
     draw = ImageDraw.Draw(card)
     date,time = exif_data['DateTime'].split(' ')
     hour, min, sec = time.split(':')
@@ -47,13 +47,23 @@ def process(image_file, index):
     cardoffset=(imgwidth-20-273, 20)
     #create Google+ information
     profile_pic_size = '100'
-    profile_url = 'https://plus.google.com/s2/photos/profile/'+gplus_id+'?sz='+profile_pic_size
-    profile_data_url = 'https://www.googleapis.com/plus/v1/people/'+gplus_id
+    #get access token
+    post_url = 'https://accounts.google.com/o/oauth2/token'
+    our_client_id='597615227690-pfgba7ficse1kf1su0qkgjllktcb7psf.apps.googleusercontent.com'
+    our_client_secret='RwkS3k8UQKDNALu-B_nQxtDd'
+    values = dict(refresh_token = token, grant_type = refresh_token, client_id = our_client_id, client_secret = our_client_secret)
+    data = urllib.urlencode(values)
+    req = urllib2.Request(post_url, data)
+    rsp = urllib2.urlopen(req)
+    content = rsp.read()
+    access_token = content['access_token']
+    #get profile info
+    profile_url = 'https://plus.google.com/s2/photos/profile/'+userid+'?sz='+profile_pic_size+'?access_token='+access_token
+    profile_data_url = 'https://www.googleapis.com/plus/v1/people/'+userid+'?access_token='+access_token
     response = urllib.urlopen(profile_data_url)
     ndata = json.load(response)
-    #name = ndata['displayName']
+    name = ndata['displayName']
     print(ndata)
-    name = "David Carr"
     prof_file = cStringIO.StringIO(urllib.urlopen(profile_url).read())
     profpic = Image.open(prof_file)
     profpic = profpic.convert('RGBA')
