@@ -7,5 +7,6 @@
     <string name="action_stop">Stop</string>
     <string name="action_take_picture">Take Picture</string>
     <string name="main">Tap for controls</string>
+    <string name="setup">Please open the GlassTimelapse app on your phone, then tap the touchpad</string>
 
 </resources>

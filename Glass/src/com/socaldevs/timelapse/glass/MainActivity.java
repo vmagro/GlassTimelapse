@@ -1,19 +1,25 @@
 package com.socaldevs.timelapse.glass;
 
+import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.DecimalFormat;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.provider.Settings.Secure;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -32,29 +38,38 @@ public class MainActivity extends Activity {
 	private CameraPreview mPreview;
 
 	private WakeLock wakeLock = null;
-	
+
 	private File dir = new File("/sdcard/timelapse");
 	private DecimalFormat formatter = new DecimalFormat("00000");
 	private static int picNum = 0;
+
+	private int eventId = -1;
 
 	private PictureCallback mPicture = new PictureCallback() {
 
 		@Override
 		public void onPictureTaken(byte[] data, Camera camera) {
-			if(!running)
+			if (!running)
 				return;
 			Log.i("status", "picture taken");
 			Log.i("length", "" + data.length);
-			
-			File out = new File(dir, "lapse_1_img"+formatter.format(picNum)+".jpg");
+
+			// File out = new File(dir, "lapse_1_img" + formatter.format(picNum)
+			// + ".jpg");
+			// FileOutputStream fos;
+			// try {
+			// fos = new FileOutputStream(out);
+			// fos.write(data);
+			// } catch (IOException e) {
+			// e.printStackTrace();
+			// }
+
+			if (eventId == -1)
+				return;
+
+			Uploader uploader = new Uploader(MainActivity.this, eventId, picNum);
+
 			picNum++;
-			FileOutputStream fos;
-			try {
-				fos = new FileOutputStream(out);
-				fos.write(data);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
 	};
 
@@ -64,10 +79,18 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 
 		handler = new Handler();
-		
+
 		dir.mkdirs();
-		
-//		Log.i("autofocus support", String.valueOf(getPackageManager().hasSystemFeature("android.hardware.camera.autofocus")));
+
+		SharedPreferences prefs = this.getSharedPreferences("stor",
+				Context.MODE_PRIVATE);
+		if (!prefs.getBoolean("paired", false)) {
+			Intent i = new Intent(this, SetupActivity.class);
+			startActivity(i);
+		}
+
+		// Log.i("autofocus support",
+		// String.valueOf(getPackageManager().hasSystemFeature("android.hardware.camera.autofocus")));
 	}
 
 	@Override
@@ -77,7 +100,7 @@ public class MainActivity extends Activity {
 		mCamera = getCameraInstance();
 
 		// Create our Preview view and set it as the content of our activity.
-		mPreview = new CameraPreview(this, mCamera);
+		mPreview = new CameraPreview(this);
 		FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
 		preview.addView(mPreview);
 
@@ -126,6 +149,36 @@ public class MainActivity extends Activity {
 		wakeLock.acquire();
 		Log.i("status", "acquired wakelock");
 		running = true;
+
+		new AsyncTask<Void, Void, Integer>() {
+
+			@Override
+			protected Integer doInBackground(Void... params) {
+				int event = -1;
+				String id = Secure.getString(
+						MainActivity.this.getContentResolver(),
+						Secure.ANDROID_ID);
+
+				try {
+					HttpURLConnection conn = (HttpURLConnection) new URL(
+							Constants.EVENT_URL+"?mode=new&glassId="+id).openConnection();
+					conn.connect();
+					DataInputStream dis = new DataInputStream(conn.getInputStream());
+					event = dis.readInt();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+
+				return event;
+			}
+			
+			@Override
+			protected void onPostExecute(Integer result){
+				MainActivity.this.eventId = result;
+			}
+
+		};
+
 		handler.postDelayed(new Runnable() {
 
 			public void run() {
@@ -198,11 +251,9 @@ public class MainActivity extends Activity {
 	public class CameraPreview extends SurfaceView implements
 			SurfaceHolder.Callback {
 		private SurfaceHolder mHolder;
-		private Camera mCamera;
 
-		public CameraPreview(Context context, Camera camera) {
+		public CameraPreview(Context context) {
 			super(context);
-			mCamera = camera;
 
 			// Install a SurfaceHolder.Callback so we get notified when the
 			// underlying surface is created and destroyed.
