@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">GlassTimelapse</string>
+    <string name="app_name">Glasswhere</string>
     <string name="action_start">Start</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_stop">Stop</string>
     <string name="action_take_picture">Take Picture</string>
     <string name="main">Tap for controls</string>
-    <string name="setup">Please open the GlassTimelapse app on your phone, then tap the touchpad</string>
+    <string name="setup">Please open the Glasswhere app on your phone, then tap the touchpad</string>
 
 </resources>

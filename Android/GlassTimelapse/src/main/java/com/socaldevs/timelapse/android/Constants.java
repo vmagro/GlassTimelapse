@@ -15,4 +15,5 @@ public class Constants {
     public static final String SP_CODE  = "wheresthecode";
     public static final String SP_ID    = "freakingid...";
     public static final String INTENT_UNLOCK_ID = "3309";
+    public static final String SP_NAME = "person name....";
 }
