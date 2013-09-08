@@ -1,4 +1,4 @@
-from PIL import Image, ImageFilter, ImageDraw, ImageFont
+from PIL import Image, ImageFilter, ImageDraw, ImageFont, ImageOps
 from PIL.ExifTags import TAGS, GPSTAGS
 import urllib, urllib2, cStringIO
 import sys, json, textwrap, os 
@@ -12,7 +12,7 @@ def process(image_file, index, userid, token, eventid):
     width = 164
     height= 252
     zoom = '18'
-    url='http://maps.googleapis.com/maps/api/staticmap?center='+loc_data+'&zoom='+zoom+'&size='+str(width)+'x'+str(height)+'&markers=color:blue%7C'+loc_data+'&sensor=false'
+    url='http://maps.googleapis.com/maps/api/staticmap?center='+loc_data+'&zoom='+zoom+'&size='+str(width)+'x'+str(height)+'&markers=color:blue%7C'+loc_data+'&inverse_lightness=true&sensor=false'
     mapfile = cStringIO.StringIO(urllib.urlopen(url).read())
     map = Image.open(mapfile)
     map = map.convert('RGBA')
@@ -28,7 +28,7 @@ def process(image_file, index, userid, token, eventid):
     hour, min, sec = time.split(':')
     if (hour[0] == '0'):
 	hour = hour[1:]
-    gurl = 'http://maps.googleapis.com/maps/api/geocode/json?latlng='+loc_data+'&sensor=false'
+    gurl = 'http://maps.googleapis.com/maps/api/geocode/json?latlng='+loc_data+'&style=invert_lightness:true|hue:0x00d4ff&sensor=false'
     response = urllib.urlopen(gurl)
     data = json.load(response)
     city =  data['results'][0]['address_components'][1]['long_name']
@@ -46,7 +46,7 @@ def process(image_file, index, userid, token, eventid):
     offset=(imgwidth-20-164-273,20)
     cardoffset=(imgwidth-20-273, 20)
     #create Google+ information
-    profile_pic_size = '100'
+    profile_pic_size = '120'
     #get access token
     post_url = 'https://accounts.google.com/o/oauth2/token'
     our_client_id='597615227690-pfgba7ficse1kf1su0qkgjllktcb7psf.apps.googleusercontent.com'
@@ -70,6 +70,14 @@ def process(image_file, index, userid, token, eventid):
     prof_file = cStringIO.StringIO(urllib.urlopen(profile_url).read())
     profpic = Image.open(prof_file)
     profpic = profpic.convert('RGBA')
+    #circle thumbnail
+    size = (120,120)
+    mask = Image.new('L', size, 0)
+    drawCircle = ImageDraw.Draw(mask)
+    drawCircle.ellipse((0,0)+size, fill=255)
+    profpic = ImageOps.fit(profpic, mask.size, centering=(0.5, 0.5))
+    profpic.putalpha(mask)
+    #transparentize 
     pbands = list(profpic.split())
     pbands[3] = pbands[3].point(lambda x: x*0.7)
     profpic = Image.merge(profpic.mode, pbands)
@@ -87,6 +95,7 @@ def process(image_file, index, userid, token, eventid):
     image.paste(profpic, prof_offset, profpic)
     image.paste(profnamebox, name_offset, profnamebox)
     image.save("glass"+("%05d" % (index))+'.png')
+    return city
 
 def get_exif_data(image):
     exif_data = {}

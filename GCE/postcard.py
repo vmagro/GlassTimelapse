@@ -20,7 +20,7 @@ def create():
 		token = jdata['refreshToken']
 		eventid = jdata['eventId']
 		userid =jdata['gPlusId']
-		#authsub_token = jdata['authsub_token']
+		authsub_token = jdata['youtubeToken']
 		image_array = jdata['images']		
 		vid_dir = os.getcwd()+'/static/'+str(userid)+'/'+str(eventid)
 		if not os.path.exists(os.getcwd()+'/static/'+str(userid)):
