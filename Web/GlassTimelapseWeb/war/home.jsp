@@ -1,3 +1,4 @@
+<%@page import="com.google.gdata.util.AuthenticationException"%>
 <%@page import="com.socaldevs.glasstimelapse.web.User"%>
 <%@page import="com.google.gdata.client.http.AuthSubUtil"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -8,8 +9,10 @@
 	if (youtubeToken != null) {
 		User user = Utils.getCurrentUser(session);
 		String onetimeUseToken = AuthSubUtil.getTokenFromReply(request.getQueryString());
-		String sessionToken = AuthSubUtil.exchangeForSessionToken(onetimeUseToken, null);
-		user.setAndUpdateYoutubeToken(sessionToken);		
+		try {
+			String sessionToken = AuthSubUtil.exchangeForSessionToken(onetimeUseToken, null);
+			user.setAndUpdateYoutubeToken(sessionToken);
+		} catch(AuthenticationException e) { /* ignore authentication error */ }
 	}
 %>
 	<div class="center">
