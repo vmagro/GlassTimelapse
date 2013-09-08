@@ -104,8 +104,7 @@ ul#menu li.active {
 }
 
 #content .box {
-	padding: 10px 20px 10px 120px;
-	height: 70px;
+	padding: 10px;
 	border-box: box-sizing;
 	text-align: left;
 	text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
@@ -113,22 +112,46 @@ ul#menu li.active {
 }
 
 #content .box.glass {
+	padding: 10px 20px 10px 120px;
+	height: 70px;
 	background: #cbbd9a;
 	background-image: url('glass.png');
 	background-repeat: no-repeat;
 }
 
 #content .box.youtube {
+	padding: 10px 20px 10px 120px;
+	height: 70px;
 	background: #e3282b;
 	background-image: url('youtube.png');
 	background-repeat: no-repeat;
 }
 
-#content .glass h4, #content .youtube h4 {
+#content .box.event {
+	background: #5d382f;
+	height: 100px;
+	position: relative;
+}
+
+#content .box.event .img_container {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	z-index: 1;
+	overflow: hidden;
+}
+#content .box.event .img_container img {
+	height: 100px;
+	margin-right: 10px;
+}
+
+#content .box h4 {
+	position: relative;
 	margin: 0;
 	padding: 0;
 	font-size: 25px;
 	font-weight: 300;
+	z-index: 2;
 }
 #content .glass p, #content .youtube p{
 	font-size: 14px;

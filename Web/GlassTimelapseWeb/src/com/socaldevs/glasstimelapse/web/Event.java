@@ -16,9 +16,15 @@ public class Event {
 	@Index
 	public Long userId;
 	@Index
+	public String city;
+	@Index
 	public Date startTime;
 	@Index
 	public Date endTime;
+	
+	public int numImages;
+
+	public String youtubeUrl;
 
 	private Event() {}
 
@@ -41,5 +47,15 @@ public class Event {
 	public User getUser() {
 		Key<User> userKey = Key.create(User.class, userId);
 		return ofy().load().key(userKey).now();
+	}
+
+	public String getState() {
+		if (endTime == null) {
+			return "ongoing";
+		} else if (youtubeUrl == null) {
+			return "processing";
+		} else {
+			return "finished";
+		}
 	}
 }

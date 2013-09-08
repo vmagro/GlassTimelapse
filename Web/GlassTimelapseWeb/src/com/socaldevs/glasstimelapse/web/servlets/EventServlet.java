@@ -13,10 +13,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.appengine.api.blobstore.BlobstoreService;
+import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.gson.Gson;
 import com.googlecode.objectify.Key;
 import com.socaldevs.glasstimelapse.web.EndEventRequest;
 import com.socaldevs.glasstimelapse.web.Event;
+import com.socaldevs.glasstimelapse.web.Image;
 import com.socaldevs.glasstimelapse.web.User;
 
 public class EventServlet extends HttpServlet {
@@ -81,6 +84,21 @@ public class EventServlet extends HttpServlet {
 				// error, no open events
 			}
 		}
+	}
 
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		String mode = req.getParameter("mode");
+		if (mode.equals("getImage")) {
+			int eventId = Integer.valueOf(req.getParameter("eventId"));
+			int imageIndex = Integer.valueOf(req.getParameter("i"));
+			BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+
+			Image image = ofy().load().type(Image.class).filter("eventId", eventId).filter("index", imageIndex).first()
+					.now();
+			if (image != null) {
+				blobstoreService.serve(image.imageKey, resp);
+			}
+		}
 	}
 }
