@@ -49,7 +49,6 @@ public class ConnectServlet extends JsonRestServlet {
 		try {
 			// read the token
 			accessToken = Jsonifiable.fromJson(req.getReader(), TokenData.class);
-			System.out.println("at:" + accessToken);
 		} catch (IOException e) {
 			sendError(resp, 400, "Unable to read auth result from request body");
 		}

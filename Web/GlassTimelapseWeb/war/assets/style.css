@@ -29,6 +29,10 @@ header h1 {
 	float: right;
 }
 
+#signinButton.hidden {
+	display: none;
+}
+
 #currentUser {
 	font-size: 13px;
 	line-height: 30px;
