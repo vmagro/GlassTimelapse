@@ -7,10 +7,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DecimalFormat;
 
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
@@ -83,8 +85,6 @@ public class MainActivity extends Activity {
 
 		dir.mkdirs();
 
-		
-
 		// Log.i("autofocus support",
 		// String.valueOf(getPackageManager().hasSystemFeature("android.hardware.camera.autofocus")));
 	}
@@ -156,35 +156,35 @@ public class MainActivity extends Activity {
 						Secure.ANDROID_ID);
 
 				try {
-					HttpURLConnection conn = (HttpURLConnection) new URL(
-							Constants.EVENT_URL+"?mode=new&glassId="+id).openConnection();
-					conn.connect();
-					DataInputStream dis = new DataInputStream(conn.getInputStream());
+					HttpClient cli = new DefaultHttpClient();
+					HttpGet get = new HttpGet(Constants.EVENT_URL + "?mode=new&glassId="+id);
+					Log.i("event url", Constants.EVENT_URL + "?mode=new&glassId="+id);
+					DataInputStream dis = new DataInputStream(cli.execute(get).getEntity().getContent());
 					event = dis.readInt();
+					Log.i("event id", ""+event);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
 
 				return event;
 			}
-			
+
 			@Override
-			protected void onPostExecute(Integer result){
+			protected void onPostExecute(Integer result) {
 				MainActivity.this.eventId = result;
+
+				handler.postDelayed(new Runnable() {
+
+					public void run() {
+						// do something
+						takePicture();
+
+						if (running)
+							handler.postDelayed(this, DELAY);
+					}
+				}, 1000);
 			}
-
-		};
-
-		handler.postDelayed(new Runnable() {
-
-			public void run() {
-				// do something
-				takePicture();
-
-				if (running)
-					handler.postDelayed(this, DELAY);
-			}
-		}, 1000);
+		}.execute();
 	}
 
 	private void stop() {

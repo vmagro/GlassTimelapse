@@ -28,7 +28,7 @@ public class SetupActivity extends Activity {
 		
 		SharedPreferences prefs = this.getSharedPreferences("stor",
 				Context.MODE_PRIVATE);
-		if (!prefs.getBoolean("paired", false)) {
+		if (prefs.getBoolean("paired", false)) {
 			goToMain();
 		}
 	}
