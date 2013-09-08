@@ -1,8 +1,10 @@
 package com.socaldevs.timelapse.glass;
 
+import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.DecimalFormat;
 
 import android.app.Activity;
@@ -12,10 +14,12 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.provider.Settings.Secure;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -39,6 +43,8 @@ public class MainActivity extends Activity {
 	private DecimalFormat formatter = new DecimalFormat("00000");
 	private static int picNum = 0;
 
+	private int eventId = -1;
+
 	private PictureCallback mPicture = new PictureCallback() {
 
 		@Override
@@ -48,16 +54,22 @@ public class MainActivity extends Activity {
 			Log.i("status", "picture taken");
 			Log.i("length", "" + data.length);
 
-			File out = new File(dir, "lapse_1_img" + formatter.format(picNum)
-					+ ".jpg");
+			// File out = new File(dir, "lapse_1_img" + formatter.format(picNum)
+			// + ".jpg");
+			// FileOutputStream fos;
+			// try {
+			// fos = new FileOutputStream(out);
+			// fos.write(data);
+			// } catch (IOException e) {
+			// e.printStackTrace();
+			// }
+
+			if (eventId == -1)
+				return;
+
+			Uploader uploader = new Uploader(MainActivity.this, eventId, picNum);
+
 			picNum++;
-			FileOutputStream fos;
-			try {
-				fos = new FileOutputStream(out);
-				fos.write(data);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
 	};
 
@@ -72,10 +84,10 @@ public class MainActivity extends Activity {
 
 		SharedPreferences prefs = this.getSharedPreferences("stor",
 				Context.MODE_PRIVATE);
-		// if(!prefs.getBoolean("paired", false)){
-		Intent i = new Intent(this, SetupActivity.class);
-		startActivity(i);
-		// }
+		if (!prefs.getBoolean("paired", false)) {
+			Intent i = new Intent(this, SetupActivity.class);
+			startActivity(i);
+		}
 
 		// Log.i("autofocus support",
 		// String.valueOf(getPackageManager().hasSystemFeature("android.hardware.camera.autofocus")));
@@ -137,6 +149,36 @@ public class MainActivity extends Activity {
 		wakeLock.acquire();
 		Log.i("status", "acquired wakelock");
 		running = true;
+
+		new AsyncTask<Void, Void, Integer>() {
+
+			@Override
+			protected Integer doInBackground(Void... params) {
+				int event = -1;
+				String id = Secure.getString(
+						MainActivity.this.getContentResolver(),
+						Secure.ANDROID_ID);
+
+				try {
+					HttpURLConnection conn = (HttpURLConnection) new URL(
+							Constants.EVENT_URL+"?mode=new&glassId="+id).openConnection();
+					conn.connect();
+					DataInputStream dis = new DataInputStream(conn.getInputStream());
+					event = dis.readInt();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+
+				return event;
+			}
+			
+			@Override
+			protected void onPostExecute(Integer result){
+				MainActivity.this.eventId = result;
+			}
+
+		};
+
 		handler.postDelayed(new Runnable() {
 
 			public void run() {
