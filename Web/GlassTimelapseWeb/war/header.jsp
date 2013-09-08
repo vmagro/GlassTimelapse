@@ -33,11 +33,20 @@
     function signInCallback(authResult) {
       if (authResult['code']) {
    	    $.post("/connect", JSON.stringify(authResult), function(profile) {
-   	    	// redirect to home
-   		  	window.location = '/home.jsp';
+   	    	<% if (request.getServletPath().equals("/index.jsp")) { %>
+   	    		// redirect to home
+   		  		window.location = '/home.jsp';
+   	    	<% } %>
    		});
       } else if (authResult['error']) {
-        console.log('There was an error: ' + authResult['error']);
+    	  console.log('There was an error: ' + authResult['error']);
+    	  
+    	  <% if (!request.getServletPath().equals("/index.jsp")) { %>
+    		// logs out, redirect to index page
+			$.post('/logout', function() {
+				window.location = '/index.jsp';
+			});
+    	  <% } %>
       }
     }
   </script>
@@ -51,17 +60,16 @@
 				<%= Utils.getCurrentUser(session).googleDisplayName %>
 				<div class="clear"></div>
 			</div>
-		<% } else { %>
-			<div id="signinButton">
-			  <span class="g-signin"
-			    data-scope="https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email"
-			    data-clientid="597615227690-pfgba7ficse1kf1su0qkgjllktcb7psf.apps.googleusercontent.com"
-			    data-redirecturi="postmessage"
-			    data-accesstype="offline"
-			    data-cookiepolicy="single_host_origin"
-			    data-callback="signInCallback">
-			  </span>
-			</div>
 		<% } %>
+		<div id="signinButton"<%=Utils.isUserLoggedIn(session) ? " class=\"hidden\"" : "" %>>
+		  <span class="g-signin"
+		    data-scope="https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email"
+		    data-clientid="597615227690-pfgba7ficse1kf1su0qkgjllktcb7psf.apps.googleusercontent.com"
+		    data-redirecturi="postmessage"
+		    data-accesstype="offline"
+		    data-cookiepolicy="single_host_origin"
+		    data-callback="signInCallback">
+		  </span>
+		</div>
 		<div class="clear"></div>
 	</header>
