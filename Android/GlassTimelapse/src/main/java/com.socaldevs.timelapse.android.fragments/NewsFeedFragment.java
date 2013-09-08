@@ -13,6 +13,7 @@ import com.socaldevs.timelapse.android.Constants;
 import com.socaldevs.timelapse.android.Postcard;
 import com.socaldevs.timelapse.android.PostcardAdapter;
 import com.socaldevs.timelapse.android.R;
+import com.socaldevs.timelapse.android.SyncServerPostcards;
 
 import java.util.ArrayList;
 
@@ -32,28 +33,18 @@ public class NewsFeedFragment extends SherlockFragment implements AdapterView.On
         newsFeed = (ListView) rootView.findViewById(R.id.newsFeedListView);
         newsFeed.setOnItemClickListener(this);
 
-        ArrayList<Postcard> testPostcards = new ArrayList<Postcard>();
-        testPostcards.add(new Postcard("Vincente Ciancio", "Huntington Beach",
-                "http://socaldevs.com/wp-content/uploads/2011/07/socal-devs-2-big-e1312568698579.png",
-                "http://socaldevs.com/wp-content/uploads/2011/07/socal-devs-2-big-e1312568698579.png"));
-        testPostcards.add(new Postcard("Vincente Ciancio", "Huntington Beach",
-                "http://socaldevs.com/wp-content/uploads/2011/07/socal-devs-2-big-e1312005752631.png",
-                "http://socaldevs.com/wp-content/uploads/2011/07/socal-devs-2-big-e1312568698579.png"));
-        testPostcards.add(new Postcard("Vincente Ciancio", "Huntington Beach",
-                "http://socaldevs.com/wp-content/uploads/2011/07/socal-devs-2-big-e1312568698579.png",
-                "http://socaldevs.com/wp-content/uploads/2011/07/socal-devs-2-big-e1312568698579.png"));
-        testPostcards.add(new Postcard("Vincente Ciancio", "Huntington Beach",
-                "http://socaldevs.com/wp-content/uploads/2011/07/socal-devs-2-big-e1312568698579.png",
-                "http://socaldevs.com/wp-content/uploads/2011/07/socal-devs-2-big-e1312568698579.png"));
-        testPostcards.add(new Postcard("Vincente Ciancio", "Huntington Beach",
-                "http://socaldevs.com/wp-content/uploads/2011/07/socal-devs-2-big-e1312568698579.png",
-                "http://socaldevs.com/wp-content/uploads/2011/07/socal-devs-2-big-e1312568698579.png"));
+        ArrayList<Postcard> arrayList = new ArrayList<Postcard>();
+        arrayList.add(Constants.POSTCARD_LOADING);
 
         postcardAdapter = new PostcardAdapter(getActivity().getBaseContext(), R.layout.postcard_list_item,
-                testPostcards);
+                arrayList);
 
         newsFeed.setAdapter(postcardAdapter);
         getSherlockActivity().sendBroadcast(new Intent(Constants.INTENT_UNLOCK_ID));
+
+        SyncServerPostcards syncAsync = new SyncServerPostcards(arrayList, postcardAdapter,
+                Constants.SERVER_EVENTS + "?all=a");
+        syncAsync.execute();
         return rootView;
     }
 
