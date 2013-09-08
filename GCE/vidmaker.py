@@ -46,10 +46,20 @@ def process(dir, userid, token, eventid, authsub_token):
 
 	video_entry = gdata.youtube.YouTubeVideoEntry(media=my_media_group)
 
-	new_entry = yt_service.InsertVideoEntry(video_entry, '/home/david/GlassTimelapse/GCE/static/'+str(userid)+'/'+str(eventid)+'/out.mp4')
+	new_entry = yt_service.InsertVideoEntry(video_entry, '/home/david/GlassTimelapse/GCE/static/'+str(userid)+'/'+str(eventid)+'/'+str(eventid)+'.mp4')
+
 	video_xml=str(new_entry)
 	start=video_xml.index('https://www.youtube.com/watch?v')
 	video_url = video_xml[start:start+43]
+	#video_url = urllib.urlencode(video_url)
+	#city = urllib.urlencode(city)
+	fields = {'youtubeUrl':video_url,'city':city,'eventId':str(eventid)}
+	encoded = urllib.urlencode(fields)
 	#Post back to App Engine
-	post_url = 'http://glass.ptzlabs.com/uploaded?youtubeUrl='+video_url+'?city='+city+'?eventid='+str(eventid)
-        req = urllib2.Request(post_url)
+	post_url = 'http://glass.ptzlabs.com/uploaded?' + encoded
+	print(post_url)
+	req = urllib2.Request(post_url,urllib.urlencode({}))
+	rsp = urllib2.urlopen(req)
+	content = rsp.read()
+	print(content)
+

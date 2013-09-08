@@ -12,12 +12,13 @@ def process(image_file, index, userid, token, eventid):
     width = 164
     height= 252
     zoom = '18'
-    url='http://maps.googleapis.com/maps/api/staticmap?center='+loc_data+'&zoom='+zoom+'&size='+str(width)+'x'+str(height)+'&markers=color:blue%7C'+loc_data+'&inverse_lightness=true&sensor=false'
+    url='http://maps.googleapis.com/maps/api/staticmap?center='+loc_data+'&zoom='+zoom+'&size='+str(width)+'x'+str(height)+'&markers=color:blue%7C'+loc_data+'&style=invert_lightness:true|hue:0x00d4ff&sensor=false'
+    print(url)
     mapfile = cStringIO.StringIO(urllib.urlopen(url).read())
     map = Image.open(mapfile)
     map = map.convert('RGBA')
     bands = list(map.split())
-    bands[3] = bands[3].point(lambda x: x*0.5)
+    bands[3] = bands[3].point(lambda x: x*0.6)
     map = Image.merge(map.mode, bands)
     #create city/time tile    
     card = Image.new('RGBA', (273,252), (0,0,0))
@@ -40,13 +41,13 @@ def process(image_file, index, userid, token, eventid):
 	y_text += height
     draw.text((20,20), hour+':'+min, (255, 255, 255), font=roboto_45)
     bands = list(card.split())
-    bands[3] = bands[3].point(lambda x: x*0.5)
+    bands[3] = bands[3].point(lambda x: x*0.6)
     card = Image.merge(card.mode, bands)
     imgwidth,imgheight = image.size
     offset=(imgwidth-20-164-273,20)
     cardoffset=(imgwidth-20-273, 20)
     #create Google+ information
-    profile_pic_size = '120'
+    profile_pic_size = '100'
     #get access token
     post_url = 'https://accounts.google.com/o/oauth2/token'
     our_client_id='597615227690-pfgba7ficse1kf1su0qkgjllktcb7psf.apps.googleusercontent.com'
@@ -71,7 +72,7 @@ def process(image_file, index, userid, token, eventid):
     profpic = Image.open(prof_file)
     profpic = profpic.convert('RGBA')
     #circle thumbnail
-    size = (120,120)
+    size = (100,100)
     mask = Image.new('L', size, 0)
     drawCircle = ImageDraw.Draw(mask)
     drawCircle.ellipse((0,0)+size, fill=255)
