@@ -1,57 +1,53 @@
 package com.socaldevs.timelapse.glass;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import android.annotation.SuppressLint;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
-import android.os.AsyncTask;
-import android.util.Log;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONObject;
 
-public class Uploader extends AsyncTask<byte[], Void, Void>{
-	
-	private static BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
-	
-	private static BluetoothSocket socket = null;
-	private static OutputStream output = null;
-	
-	static{
-		BluetoothDevice device = adapter.getBondedDevices().iterator().next();
+import android.content.Context;
+import android.os.AsyncTask;
+import android.provider.Settings.Secure;
+
+public class Uploader extends AsyncTask<byte[], Void, Void> {
+
+	private int index = 0;
+	private int eventId = 0;
+	private Context ctx;
+
+	public Uploader(Context ctx, int eventId, int index) {
+		this.ctx = ctx;
+		this.eventId = eventId;
+		this.index = index;
+	}
+
+	@Override
+	protected Void doInBackground(byte[]... params) {
+		String id = Secure.getString(ctx.getContentResolver(),
+				Secure.ANDROID_ID);
+		
 		try {
-			socket = device.createRfcommSocketToServiceRecord(Constants.BT_UUID);
-			output = socket.getOutputStream();
-			socket.connect();
-		} catch (IOException e) {
+			JSONObject json = new JSONObject();
+			json.put("glassId", id);
+			json.put("eventId", eventId);
+			json.put("index", index);
+			json.put("image", params[0]);
+			
+			byte[] bytes = json.toString().getBytes();
+			
+			
+			HttpClient cli = new DefaultHttpClient();
+			
+			HttpPost post = new HttpPost(Constants.UPLOAD_URL);
+			ByteArrayEntity entity = new ByteArrayEntity(bytes);
+			post.setEntity(entity);
+			
+			cli.execute(post);
+			
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-	
-	private int index = 0;
-	
-	public Uploader(int id){
-		this.index = id;
-	}
-
-	@SuppressLint("NewApi")
-	@Override
-	protected Void doInBackground(byte[]... bytes) {
-		Log.i("uploader", "starting upload");
-		
-		Log.i("socket connected", String.valueOf(socket.isConnected()));
-		
-		if(socket != null){
-			try {
-				output.write(bytes[0]);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		else{
-			Log.e("status", "socket is null");
-		}
-		Log.i("uploader", "wrote bytes");
-		
 		return null;
 	}
 

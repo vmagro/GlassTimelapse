@@ -8,12 +8,28 @@
 		<servlet-class>com.socaldevs.glasstimelapse.web.servlets.ConnectServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
+		<servlet-name>LogoutServlet</servlet-name>
+		<url-pattern>/logout</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>LogoutServlet</servlet-name>
+		<servlet-class>com.socaldevs.glasstimelapse.web.servlets.LogoutServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
 		<servlet-name>EventServlet</servlet-name>
 		<url-pattern>/event</url-pattern>
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>EventServlet</servlet-name>
 		<servlet-class>com.socaldevs.glasstimelapse.web.servlets.EventServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>PairGlassServlet</servlet-name>
+		<url-pattern>/pairGlass</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>PairGlassServlet</servlet-name>
+		<servlet-class>com.socaldevs.glasstimelapse.web.servlets.PairGlassServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>UploadServlet</servlet-name>

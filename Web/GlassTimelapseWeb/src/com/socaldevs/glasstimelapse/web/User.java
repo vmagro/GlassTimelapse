@@ -17,6 +17,9 @@ public class User extends Jsonifiable {
 	public String email;
 	@Expose
 	@Index
+	public String glassId;
+	@Expose
+	@Index
 	public String googleUserId;
 	@Expose
 	public String googleDisplayName;
