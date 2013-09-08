@@ -14,7 +14,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large.Inverse"
+        android:textAppearance="@android:style/TextAppearance.Large.Inverse"
         android:text="@string/signintext"
         android:id="@+id/textView"
         android:layout_above="@+id/sign_in_button"
@@ -23,7 +23,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small.Inverse"
+        android:textAppearance="@android:style/TextAppearance.Small.Inverse"
         android:text="@string/signinsubtext"
         android:id="@+id/textView2"
         android:layout_above="@+id/textView"

@@ -30,6 +30,8 @@
     <color name="abs__bright_foreground_holo_light">@color/abs__background_holo_dark</color>
     <!-- From: file:/home/vincente/git/GlassTimelapse/Android/GlassTimelapse/src/main/res/values/colors.xml -->
     <color name="almost_white">#E6E6E6</color>
+    <color name="card_shadow">@android:color/darker_gray</color>
+    <color name="card_white">@android:color/white</color>
     <!-- From: file:/home/vincente/git/GlassTimelapse/Android/GlassTimelapse/build/exploded-bundles/ComGoogleAndroidGmsPlayServices3136.aar/res/values/colors.xml -->
     <color name="common_action_bar_splitter">#d2d2d2</color>
     <color name="common_signin_btn_dark_text_default">@android:color/white</color>
@@ -48,6 +50,7 @@
     <!-- From: file:/home/vincente/git/GlassTimelapse/Android/GlassTimelapse/src/main/res/values/colors_vintagepostcard.xml -->
     <color name="pressed_vintagepostcard">#CCA1E6DF</color>
     <!-- From: file:/home/vincente/git/GlassTimelapse/Android/GlassTimelapse/src/main/res/values/colors.xml -->
+    <color name="second_grey">#ccc</color>
     <color name="vintage_blue">#639490</color>
     <color name="vintage_brown">#CBBD9A</color>
     <color name="vintage_orange">#D1722E</color>

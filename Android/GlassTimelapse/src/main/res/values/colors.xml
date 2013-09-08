@@ -7,4 +7,7 @@
     <color name="light_vintage_orange">#e8b896</color>
     <color name="almost_white">#E6E6E6</color>
     <color name="fields">#CBBD9A</color>
+    <color name="second_grey">#ccc</color>
+    <color name="card_shadow">@android:color/darker_gray</color>
+    <color name="card_white">@android:color/white</color>
 </resources>
