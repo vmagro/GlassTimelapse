@@ -1,13 +1,16 @@
 package com.socaldevs.timelapse.android;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothServerSocket;
+import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.net.http.AndroidHttpClient;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.View;
@@ -25,6 +28,19 @@ import com.socaldevs.timelapse.android.fragments.AlbumFragment;
 import com.socaldevs.timelapse.android.fragments.ControlFragment;
 import com.socaldevs.timelapse.android.fragments.NewsFeedFragment;
 import com.socaldevs.timelapse.android.fragments.SignInFragment;
+
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.UUID;
 
 public class MainActivity extends SherlockFragmentActivity{
 
@@ -80,6 +96,7 @@ public class MainActivity extends SherlockFragmentActivity{
                 getSupportActionBar().setTitle(mTitle);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
+
         };
         // Set the drawer toggle as the DrawerListener
         mDrawerLayout.setDrawerListener(mDrawerToggle);
@@ -119,19 +136,23 @@ public class MainActivity extends SherlockFragmentActivity{
 /** Swaps fragments in the main content view */
     public void selectItem(int position) {
         // Insert the fragment by replacing any existing fragment
-        Log.i(TAG, "Switching to fragment: " + position);
+        String newTitle;
         switch(position){
             case 0:
                 currentFragment = new NewsFeedFragment();
+                newTitle = "News Feed";
                 break;
             case 1:
                 currentFragment = new AlbumFragment();
+                newTitle = "My Album";
                 break;
             case 2:
                 currentFragment = new ControlFragment();
+                newTitle = "Controls";
                 break;
             default:
                 currentFragment = new SignInFragment();
+                newTitle = "Sign In";
                 break;
         }
 
@@ -141,6 +162,7 @@ public class MainActivity extends SherlockFragmentActivity{
         // Highlight the selected item and close the drawer
         mDrawerList.setItemChecked(position, true);
         mDrawerLayout.closeDrawer(mDrawerList);
+        getSupportActionBar().setTitle(newTitle);
     }
 
     /* Called whenever we call invalidateOptionsMenu() */

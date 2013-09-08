@@ -4,8 +4,11 @@ import datetime
 import json
 import base64
 import os
+
 app = Flask(__name__, static_url_path='')
+
 os.chdir('.')
+
 @app.route('/')
 def root():
 	return app.send_static_file('index.html')
@@ -17,6 +20,7 @@ def create():
 		token = jdata['refreshToken']
 		eventid = jdata['eventId']
 		userid =jdata['gPlusId']
+		#authsub_token = jdata['authsub_token']
 		image_array = jdata['images']		
 		vid_dir = os.getcwd()+'/static/'+str(userid)+'/'+str(eventid)
 		if not os.path.exists(os.getcwd()+'/static/'+str(userid)):
@@ -29,7 +33,7 @@ def create():
                         f.write(base64.decodestring(image))
                         f.close()
 			imageindex=imageindex+1
-		vidmaker.process(vid_dir, userid, token, eventid)
+		vidmaker.process(vid_dir, userid, token, eventid, authsub_token)
 		return 'Success '+str(eventid)
 	else:
 		return 'What did the fox say?'
