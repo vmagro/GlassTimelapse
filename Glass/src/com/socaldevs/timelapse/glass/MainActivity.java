@@ -34,7 +34,7 @@ public class MainActivity extends Activity {
 	private CameraPreview mPreview;
 
 	private WakeLock wakeLock = null;
-	
+
 	private File dir = new File("/sdcard/timelapse");
 	private DecimalFormat formatter = new DecimalFormat("00000");
 	private static int picNum = 0;
@@ -43,12 +43,13 @@ public class MainActivity extends Activity {
 
 		@Override
 		public void onPictureTaken(byte[] data, Camera camera) {
-			if(!running)
+			if (!running)
 				return;
 			Log.i("status", "picture taken");
 			Log.i("length", "" + data.length);
-			
-			File out = new File(dir, "lapse_1_img"+formatter.format(picNum)+".jpg");
+
+			File out = new File(dir, "lapse_1_img" + formatter.format(picNum)
+					+ ".jpg");
 			picNum++;
 			FileOutputStream fos;
 			try {
@@ -66,16 +67,18 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 
 		handler = new Handler();
-		
+
 		dir.mkdirs();
-		
-		SharedPreferences prefs = this.getSharedPreferences("stor", Context.MODE_PRIVATE);
-		if(!prefs.getBoolean("paired", false)){
-			Intent i = new Intent(this, SetupActivity.class);
-			startActivity(i);
-		}
-		
-//		Log.i("autofocus support", String.valueOf(getPackageManager().hasSystemFeature("android.hardware.camera.autofocus")));
+
+		SharedPreferences prefs = this.getSharedPreferences("stor",
+				Context.MODE_PRIVATE);
+		// if(!prefs.getBoolean("paired", false)){
+		Intent i = new Intent(this, SetupActivity.class);
+		startActivity(i);
+		// }
+
+		// Log.i("autofocus support",
+		// String.valueOf(getPackageManager().hasSystemFeature("android.hardware.camera.autofocus")));
 	}
 
 	@Override
@@ -85,7 +88,7 @@ public class MainActivity extends Activity {
 		mCamera = getCameraInstance();
 
 		// Create our Preview view and set it as the content of our activity.
-		mPreview = new CameraPreview(this, mCamera);
+		mPreview = new CameraPreview(this);
 		FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
 		preview.addView(mPreview);
 
@@ -99,8 +102,8 @@ public class MainActivity extends Activity {
 		super.onPause();
 		mCamera.stopPreview();
 		mCamera.unlock();
-//		mCamera.release();
-//		mCamera = null;
+		mCamera.release();
+		mCamera = null;
 	}
 
 	/** Check if this device has a camera */
@@ -206,11 +209,9 @@ public class MainActivity extends Activity {
 	public class CameraPreview extends SurfaceView implements
 			SurfaceHolder.Callback {
 		private SurfaceHolder mHolder;
-		private Camera mCamera;
 
-		public CameraPreview(Context context, Camera camera) {
+		public CameraPreview(Context context) {
 			super(context);
-			mCamera = camera;
 
 			// Install a SurfaceHolder.Callback so we get notified when the
 			// underlying surface is created and destroyed.
