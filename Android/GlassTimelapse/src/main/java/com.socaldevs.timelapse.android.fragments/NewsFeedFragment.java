@@ -65,7 +65,6 @@ public class NewsFeedFragment extends SherlockFragment implements AdapterView.On
         getSherlockActivity().registerReceiver(mUpdateReceiver,
                 new IntentFilter(Constants.INTENT_REFRESH));
 
-
         return rootView;
     }
 
@@ -77,12 +76,10 @@ public class NewsFeedFragment extends SherlockFragment implements AdapterView.On
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
-                arrayList.get(i).getVideoUrl()
-        )));
-
-
+        if(arrayList.get(i).getVideoUrl() != null)
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
+                    arrayList.get(i).getVideoUrl()
+            )));
     }
 
     @Override

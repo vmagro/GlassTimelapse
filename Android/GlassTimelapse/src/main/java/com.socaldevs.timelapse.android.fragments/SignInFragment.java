@@ -70,7 +70,7 @@ public class SignInFragment extends SherlockFragment implements GooglePlayServic
         rootView.findViewById(R.id.sign_in_button).setOnClickListener(this);
 
         //If we already have an access code, lets authorize without their permission
-        if(sp.contains(Constants.SP_CODE)){
+        if(!sp.contains(Constants.SP_CODE)){
             mConnectionProgressDialog.show();
             mPlusClient.connect();
         }
