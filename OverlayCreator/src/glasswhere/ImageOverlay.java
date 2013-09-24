@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -64,7 +65,12 @@ public class ImageOverlay {
 		g.setFont(roboto_45);
 		g.drawString(time, 20, 60);
 		g.setFont(roboto_30);
-		g.drawString(locationName, 20, 150);
+		List<String> locationStrings = StringUtils.wrap(locationName, g.getFontMetrics(roboto_30), infoWidth-20);
+		int index=0;
+		for(String line : locationStrings) {
+			g.drawString(line, 20, index+120);
+			index += 30;
+		}
 		g.dispose();
 		return cardImage;
 	}
