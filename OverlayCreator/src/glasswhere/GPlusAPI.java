@@ -1,11 +1,26 @@
 package glasswhere;
+
+import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
+import javax.imageio.ImageIO;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class GPlusAPI {
+	public static class GPlusUser {
+		public String userName;
+		public BufferedImage profileImage;
+	}
+
 	public static String getAuthToken() throws IOException {
 		URL gPlusTokenURL = new URL(
 				"https://accounts.google.com/o/oauth2/token");
@@ -36,8 +51,30 @@ public class GPlusAPI {
 		System.out.println(response);
 		return "hello";
 	}
-	
-	/*public static BufferedImage getProfPic(String googleID) {
-		
-	}*/
+
+	public static GPlusUser getUserInfo(String googleID)
+			throws MalformedURLException, IOException, JSONException {
+		URL profileURL = new URL(
+				"https://www.googleapis.com/plus/v1/people/'+userid+'?access_token="
+						+ getAuthToken());
+		URLConnection connection = profileURL.openConnection();
+		String line;
+		StringBuilder builder = new StringBuilder();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(
+				connection.getInputStream()));
+		while ((line = reader.readLine()) != null) {
+			builder.append(line);
+		}
+		JSONObject json = new JSONObject(builder.toString());
+		String userFullName = json.getString("displayName");
+		JSONObject profPic = json.getJSONObject("image");
+		String profPicURL = profPic.getString("url");
+		profPicURL = profPicURL.substring(0, profPicURL.length() - 5);
+		URL profImageURL = new URL(profPicURL + "sz=100");
+		BufferedImage profImage = ImageIO.read(profImageURL);
+		GPlusUser user = new GPlusUser();
+		user.profileImage = profImage;
+		user.userName = userFullName;
+		return user;
+	}
 }

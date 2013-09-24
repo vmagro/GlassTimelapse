@@ -1,5 +1,7 @@
 package glasswhere;
 
+import glasswhere.GPlusAPI.GPlusUser;
+
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Font;
@@ -9,7 +11,9 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -32,6 +36,18 @@ public class ImageOverlay {
 	public static int cardOffsetX = overallWidth - infoWidth - borderpx;
 	public static int cardOffsetY = borderpx;
 
+	public Font roboto;
+	public static Font roboto_30;
+	public static Font roboto_45;
+
+	public ImageOverlay() throws FileNotFoundException, FontFormatException,
+			IOException {
+		roboto = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream(
+				"res/Roboto-Light.ttf"));
+		roboto_30 = roboto.deriveFont(30f);
+		roboto_45 = roboto.deriveFont(45f);
+	}
+
 	static BufferedImage generateOverlay(BufferedImage glassImage,
 			String loc_data, String time) throws IOException, JSONException,
 			FontFormatException {
@@ -44,6 +60,7 @@ public class ImageOverlay {
 		g.drawImage(mapImage, mapOffsetX, mappOffsetY, null);
 		g.drawImage(createInfoCard(MapsAPI.getLocationName(loc_data), time),
 				cardOffsetX, cardOffsetY, null);
+		//g.drawImage(createUserCard(googleID), 0, overallHeight-borderpx, null);
 		g.dispose();
 		return glassImage;
 	}
@@ -52,10 +69,6 @@ public class ImageOverlay {
 			throws FontFormatException, IOException {
 		BufferedImage cardImage = new BufferedImage(infoWidth, infoHeight,
 				BufferedImage.TYPE_INT_RGB);
-		Font roboto = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream(
-				"res/Roboto-Light.ttf"));
-		Font roboto_30 = roboto.deriveFont(30f);
-		Font roboto_45 = roboto.deriveFont(45f);
 		Graphics2D g = cardImage.createGraphics();
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
@@ -65,12 +78,31 @@ public class ImageOverlay {
 		g.setFont(roboto_45);
 		g.drawString(time, 20, 60);
 		g.setFont(roboto_30);
-		List<String> locationStrings = StringUtils.wrap(locationName, g.getFontMetrics(roboto_30), infoWidth-20);
-		int index=0;
-		for(String line : locationStrings) {
-			g.drawString(line, 20, index+120);
+		List<String> locationStrings = StringUtils.wrap(locationName,
+				g.getFontMetrics(roboto_30), infoWidth - 20);
+		int index = 0;
+		for (String line : locationStrings) {
+			g.drawString(line, 20, index + 120);
 			index += 30;
 		}
+		g.dispose();
+		return cardImage;
+	}
+
+	static BufferedImage createUserCard(String googleID)
+			throws MalformedURLException, IOException, JSONException {
+		GPlusUser newUser = GPlusAPI.getUserInfo(googleID);
+
+		BufferedImage cardImage = new BufferedImage(overallWidth, 100,
+				BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = cardImage.createGraphics();
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g.setFont(roboto_45);
+		g.drawString(newUser.userName, 150, 40);
+		g.drawImage(newUser.profileImage, borderpx, 0, null);
 		g.dispose();
 		return cardImage;
 	}
