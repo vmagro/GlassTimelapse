@@ -28,9 +28,9 @@ public class MapsAPI {
 						+ Integer.toString(mapWidth)
 						+ "x"
 						+ Integer.toString(mapHeight)
-						+ "&markers=color:blue%7C"
+						+ "&markers=color:red%7C"
 						+ loc_data
-						+ "&style=invert_lightness:true|hue:0x00d4ff&sensor=false");
+						+ "&style=invert_lightness:true|hue:0x00d4ff|saturation:-77|lightness:23&sensor=false");
 		BufferedImage mapImage = ImageIO.read(mapFetchURL);
 		return mapImage;
 	}
