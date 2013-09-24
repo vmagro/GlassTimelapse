@@ -21,13 +21,13 @@ public class GPlusAPI {
 		public BufferedImage profileImage;
 	}
 
-	public static String getAuthToken() throws IOException {
+	public static String getAuthToken(String token) throws IOException {
 		URL gPlusTokenURL = new URL(
 				"https://accounts.google.com/o/oauth2/token");
 		String charset = "UTF-8";
 		String our_client_id = "597615227690-pfgba7ficse1kf1su0qkgjllktcb7psf.apps.googleusercontent.com";
 		String our_client_secret = "RwkS3k8UQKDNALu-B_nQxtDd";
-		String requestParams = "refresh_token=token"
+		String requestParams = "refresh_token=" + token
 				+ "&grant_type=refresh_token" + "&client_id=" + our_client_id
 				+ "&client_secret=" + our_client_secret;
 		System.out.println(requestParams);
@@ -52,11 +52,10 @@ public class GPlusAPI {
 		return "hello";
 	}
 
-	public static GPlusUser getUserInfo(String googleID)
+	public static GPlusUser getUserInfo(String googleID, String token)
 			throws MalformedURLException, IOException, JSONException {
-		URL profileURL = new URL(
-				"https://www.googleapis.com/plus/v1/people/'+userid+'?access_token="
-						+ getAuthToken());
+		URL profileURL = new URL("https://www.googleapis.com/plus/v1/people/"
+				+ googleID + "?access_token=" + getAuthToken(token));
 		URLConnection connection = profileURL.openConnection();
 		String line;
 		StringBuilder builder = new StringBuilder();

@@ -60,7 +60,7 @@ public class ImageOverlay {
 		g.drawImage(mapImage, mapOffsetX, mappOffsetY, null);
 		g.drawImage(createInfoCard(MapsAPI.getLocationName(loc_data), time),
 				cardOffsetX, cardOffsetY, null);
-		//g.drawImage(createUserCard(googleID), 0, overallHeight-borderpx, null);
+		//g.drawImage(createUserCard(googleID, token), 0, overallHeight-borderpx, null);
 		g.dispose();
 		return glassImage;
 	}
@@ -89,9 +89,9 @@ public class ImageOverlay {
 		return cardImage;
 	}
 
-	static BufferedImage createUserCard(String googleID)
+	static BufferedImage createUserCard(String googleID, String token)
 			throws MalformedURLException, IOException, JSONException {
-		GPlusUser newUser = GPlusAPI.getUserInfo(googleID);
+		GPlusUser newUser = GPlusAPI.getUserInfo(googleID, token);
 
 		BufferedImage cardImage = new BufferedImage(overallWidth, 100,
 				BufferedImage.TYPE_INT_ARGB);
