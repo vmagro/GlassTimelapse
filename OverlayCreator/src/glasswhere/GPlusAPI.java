@@ -36,4 +36,8 @@ public class GPlusAPI {
 		System.out.println(response);
 		return "hello";
 	}
+	
+	/*public static BufferedImage getProfPic(String googleID) {
+		
+	}*/
 }
