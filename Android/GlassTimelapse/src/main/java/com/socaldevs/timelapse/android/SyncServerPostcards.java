@@ -38,6 +38,7 @@ public class SyncServerPostcards extends AsyncTask<Void, Void, JSONArray>{
             if(response != null){
                 String rawResponse = EntityUtils.toString(response.getEntity());
                 responseArray = new JSONArray(rawResponse);
+                System.out.println(rawResponse);
             }
 
         } catch (ClientProtocolException e) {
@@ -60,13 +61,15 @@ public class SyncServerPostcards extends AsyncTask<Void, Void, JSONArray>{
                 try {
                     String user     = jsonArray.getJSONObject(i).getString("userId");
                     String eventId  = jsonArray.getJSONObject(i).getString("id");
-                    String location = jsonArray.getJSONObject(i).getString("startTime");
-                    String videoUrl = jsonArray.getJSONObject(i).getString("youtubeUrl");
-                    String preview  = Constants.SERVER_EVENTS+"?mode=getImage&eventId=" + eventId +
+                    //String location = jsonArray.getJSONObject(i).getString("startTime");
+                    //String videoUrl = jsonArray.getJSONObject(i).getString("youtubeUrl");
+                    String preview  = Constants.SERVER_BASE+"?mode=getImage&eventId=" + eventId +
                             "&i=1";
+                    System.out.println(eventId);
+                    //preview = "http://socaldevs.com/wp-content/uploads/2011/07/socal-devs-2-big-e1312568698579.png";
 
-                    Postcard temp = new Postcard(user, location, videoUrl, preview);
-                    if(videoUrl != null)
+                    Postcard temp = new Postcard(user, "Philadelphia", "videoUrl" , preview);
+                    //if(videoUrl != null)
                         arrayList.add(temp);
                 } catch (JSONException e) {
                     e.printStackTrace();

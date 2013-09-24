@@ -593,7 +593,7 @@
     <string name="location_client_ulr_inactive_unknown_restriction" translatable="false">        UnknownRestriction</string>
     <!-- From: file:/home/vincente/git/GlassTimelapse/Android/GlassTimelapse/src/main/res/values/strings.xml -->
     <string name="signinsubtext">Sign in to Continue</string>
-    <string name="signintext">Welcome to the Postcard Office</string>
+    <string name="signintext">Welcome to the Glasswhere</string>
     <!-- From: file:/home/vincente/git/GlassTimelapse/Android/GlassTimelapse/src/main/res/values/styles_vintagepostcard.xml -->
     <style name="ActionBar.Solid.Vintagepostcard" parent="@style/Widget.Sherlock.Light.ActionBar.Solid.Inverse">
         <item name="background">@drawable/ab_solid_vintagepostcard</item>

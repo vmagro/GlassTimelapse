@@ -16,6 +16,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 /**
@@ -101,7 +103,12 @@ public class PostcardAdapter extends ArrayAdapter<Postcard> {
 
             try {
                 is  = new DefaultHttpClient().execute(new HttpPost(params[1].toString())).getEntity().getContent();
-                imageDrawable = BitmapFactory.decodeStream(is);
+
+                HttpURLConnection connection = (HttpURLConnection) new URL(params[1].toString()).openConnection();
+                connection.connect();
+                InputStream input = connection.getInputStream();
+                imageDrawable = BitmapFactory.decodeStream(input);
+                //imageDrawable = BitmapFactory.decodeStream(is);
 
             } catch (Exception e) {
                 e.printStackTrace();
