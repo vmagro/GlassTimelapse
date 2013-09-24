@@ -2,13 +2,17 @@ package com.socaldevs.timelapse.glass;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
+
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -45,6 +49,7 @@ public class MainActivity extends Activity {
 	private DecimalFormat formatter = new DecimalFormat("00000");
 	private static int picNum = 0;
 
+	File vidDir = null;
 	private String eventId = null;
 
 	private PictureCallback mPicture = new PictureCallback() {
@@ -56,15 +61,15 @@ public class MainActivity extends Activity {
 			Log.i("status", "picture taken");
 			Log.i("length", "" + data.length);
 
-			// File out = new File(dir, "lapse_1_img" + formatter.format(picNum)
-			// + ".jpg");
-			// FileOutputStream fos;
-			// try {
-			// fos = new FileOutputStream(out);
-			// fos.write(data);
-			// } catch (IOException e) {
-			// e.printStackTrace();
-			// }
+			File out = new File(vidDir, "img" + formatter.format(picNum)
+					+ ".jpg");
+			FileOutputStream fos;
+			try {
+				fos = new FileOutputStream(out);
+				fos.write(data);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 
 			if (eventId == null)
 				return;
@@ -83,8 +88,43 @@ public class MainActivity extends Activity {
 
 		handler = new Handler();
 
+		File ffmpeg = new File(this.getFilesDir(), "ffmpeg");
+
+		if (!ffmpeg.exists()) {
+			Log.i("ffmpeg", "does not exist, installing");
+			try {
+				FileOutputStream fos = this.openFileOutput("ffmpeg",
+						Context.MODE_WORLD_WRITEABLE);
+				InputStream in = getResources().openRawResource(R.raw.ffmpeg);
+				while (in.available() > 0) {
+					byte[] buffer = new byte[in.available()];
+					int read = in.read(buffer);
+					fos.write(buffer, 0, read);
+				}
+				fos.close();
+				ffmpeg.setExecutable(true);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		} else {
+			Log.i("ffmpeg", "exists, path = " + ffmpeg.getAbsolutePath());
+		}
+
+		try {
+			Process p = Runtime.getRuntime().exec(
+					ffmpeg.getAbsolutePath() + " --help");
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					p.getInputStream()));
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				Log.i("output", line);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		dir.mkdirs();
-		
+
 		Log.i("status", "started");
 
 		// Log.i("autofocus support",
@@ -100,12 +140,13 @@ public class MainActivity extends Activity {
 		// Create our Preview view and set it as the content of our activity.
 		mPreview = new CameraPreview(this);
 		FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-		preview.addView(mPreview);
+		if (preview != null)
+			preview.addView(mPreview);
 
 		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 		wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK,
 				"Glass Timelapse");
-		
+
 		openOptionsMenu();
 	}
 
@@ -146,8 +187,8 @@ public class MainActivity extends Activity {
 	private boolean running = false;
 
 	private void start() {
-		if(running){
-			Log.i("status", "already running with event id = "+eventId);
+		if (running) {
+			Log.i("status", "already running with event id = " + eventId);
 			return;
 		}
 		wakeLock.acquire();
@@ -169,8 +210,9 @@ public class MainActivity extends Activity {
 							+ "?mode=new&glassId=" + id);
 					Log.i("event url", Constants.EVENT_URL
 							+ "?mode=new&glassId=" + id);
-					BufferedReader reader = new BufferedReader(new InputStreamReader(cli.execute(post)
-							.getEntity().getContent()));
+					BufferedReader reader = new BufferedReader(
+							new InputStreamReader(cli.execute(post).getEntity()
+									.getContent()));
 					event = reader.readLine();
 					Log.i("event id", "" + event);
 				} catch (Exception ex) {
@@ -183,6 +225,8 @@ public class MainActivity extends Activity {
 			@Override
 			protected void onPostExecute(String result) {
 				MainActivity.this.eventId = result;
+				vidDir = new File(dir, MainActivity.this.eventId);
+				vidDir.mkdirs();
 
 				handler.postDelayed(new Runnable() {
 
@@ -200,23 +244,25 @@ public class MainActivity extends Activity {
 
 	private void stop() {
 		running = false;
-		
-		handler.postDelayed(new Runnable(){
+
+		handler.postDelayed(new Runnable() {
 
 			@Override
 			public void run() {
-				new AsyncTask<Void, Void, Void>(){
+				new AsyncTask<Void, Void, Void>() {
 
 					@Override
 					protected Void doInBackground(Void... params) {
-						Log.i("event", "canceling event "+eventId);
-						String id = Secure.getString(MainActivity.this.getContentResolver(),
+						Log.i("event", "canceling event " + eventId);
+						String id = Secure.getString(
+								MainActivity.this.getContentResolver(),
 								Secure.ANDROID_ID);
 
 						HttpClient cli = new DefaultHttpClient();
-						HttpPost post = new HttpPost(Constants.EVENT_URL + "?mode=end&glassId="
-								+ id + "&eventId=" + eventId);
-						
+						HttpPost post = new HttpPost(Constants.EVENT_URL
+								+ "?mode=end&glassId=" + id + "&eventId="
+								+ eventId);
+
 						try {
 							cli.execute(post).getEntity().consumeContent();
 						} catch (ClientProtocolException e) {
@@ -229,16 +275,53 @@ public class MainActivity extends Activity {
 							wakeLock.release();
 							Log.i("status", "released wakelock");
 						} catch (Exception ex) {
-							Log.e("wakelock", "error releasing wakelock, proceeding normally");
+							Log.e("wakelock",
+									"error releasing wakelock, proceeding normally");
 						}
 						MainActivity.this.finish();
 						return null;
 					}
-					
+
+				}.execute();
+
+				// make the video
+				new AsyncTask<Void, Void, Void>() {
+
+					@Override
+					protected Void doInBackground(Void... params) {
+						int num = vidDir.listFiles().length;
+						String framerate = null;
+						if (num < 10)
+							framerate = "1/5";
+						if (num < 20)
+							framerate = "1/2";
+						if (num < 100)
+							framerate = "1";
+						if (num > 100)
+							framerate = "3";
+
+						String args = " -y -r "
+								+ framerate
+								+ " -pattern_type glob -i '*.png' -c:v libx264 -pix_fmt yuv420p vid"
+								+ eventId + ".mp4";
+						String command = new File(MainActivity.this
+								.getFilesDir(), "ffmpeg").getAbsolutePath()
+								+ " " + args;
+
+						Log.i("command", command);
+						try {
+							Runtime.getRuntime().exec(command);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+
+						return null;
+					}
 				}.execute();
 			}
-			
-		}, 20000); //wait 20 seconds to make sure that the last image is uploaded
+
+		}, 20000); // wait 20 seconds to make sure that the last image is
+					// uploaded
 	}
 
 	private void takePicture() {
@@ -266,18 +349,17 @@ public class MainActivity extends Activity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
-	
+
 	@Override
-	public boolean onPrepareOptionsMenu (Menu menu) {
-	    if (running){
-	        menu.getItem(0).setEnabled(false);
-	        menu.getItem(1).setEnabled(true);
-	    }
-	    else{
-	    	menu.getItem(1).setEnabled(false);
-	    	menu.getItem(0).setEnabled(true);
-	    }
-	    return true;
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		if (running) {
+			menu.getItem(0).setEnabled(false);
+			menu.getItem(1).setEnabled(true);
+		} else {
+			menu.getItem(1).setEnabled(false);
+			menu.getItem(0).setEnabled(true);
+		}
+		return true;
 	}
 
 	/**
@@ -320,6 +402,9 @@ public class MainActivity extends Activity {
 		}
 
 		public void surfaceCreated(SurfaceHolder holder) {
+			if (mCamera == null) {
+				return;
+			}
 			// The Surface has been created, now tell the camera where to draw
 			// the preview.
 			try {

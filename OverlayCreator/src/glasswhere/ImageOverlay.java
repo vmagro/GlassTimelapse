@@ -49,8 +49,8 @@ public class ImageOverlay {
 	}
 
 	static BufferedImage generateOverlay(BufferedImage glassImage,
-			String loc_data, String time) throws IOException, JSONException,
-			FontFormatException {
+			String loc_data, String time, String glassID) throws IOException,
+			JSONException, FontFormatException {
 		BufferedImage mapImage = MapsAPI.getMap(loc_data);
 		Graphics2D g = glassImage.createGraphics();
 		AlphaComposite composite = AlphaComposite.getInstance(
@@ -60,7 +60,11 @@ public class ImageOverlay {
 		g.drawImage(mapImage, mapOffsetX, mappOffsetY, null);
 		g.drawImage(createInfoCard(MapsAPI.getLocationName(loc_data), time),
 				cardOffsetX, cardOffsetY, null);
+<<<<<<< HEAD
 		//g.drawImage(createUserCard(googleID, token), 0, overallHeight-borderpx, null);
+=======
+		/*g.drawImage(createUserCard(glassID), 0, overallHeight - borderpx, null);*/
+>>>>>>> 3033eb4280b735275f02908b278e9108d352eb4a
 		g.dispose();
 		return glassImage;
 	}
@@ -78,21 +82,28 @@ public class ImageOverlay {
 		g.setFont(roboto_45);
 		g.drawString(time, 20, 60);
 		g.setFont(roboto_30);
-		List<String> locationStrings = StringUtils.wrap(locationName,
+		/*List<String> locationStrings = StringUtils.wrap(locationName,
 				g.getFontMetrics(roboto_30), infoWidth - 20);
 		int index = 0;
 		for (String line : locationStrings) {
 			g.drawString(line, 20, index + 120);
 			index += 30;
-		}
+		}*/
+		g.drawString(locationName, 20, 150);
 		g.dispose();
 		return cardImage;
 	}
 
+<<<<<<< HEAD
 	static BufferedImage createUserCard(String googleID, String token)
 			throws MalformedURLException, IOException, JSONException {
 		GPlusUser newUser = GPlusAPI.getUserInfo(googleID, token);
 
+=======
+	static BufferedImage createUserCard(String glassID)
+			throws MalformedURLException, IOException, JSONException {
+		GPlusUser newUser = GPlusAPI.getUserInfo(glassID);
+>>>>>>> 3033eb4280b735275f02908b278e9108d352eb4a
 		BufferedImage cardImage = new BufferedImage(overallWidth, 100,
 				BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = cardImage.createGraphics();
@@ -109,14 +120,13 @@ public class ImageOverlay {
 
 	public static void main(String[] args) throws IOException, JSONException,
 			FontFormatException {
-		String imageFolderLocation = "/home/david/Pictures";
+		String imageFolderLocation = "/home/david/Downloads/pictures";
 		File dir = new File(imageFolderLocation);
 		int imageIndex = 0;
 		for (File child : dir.listFiles()) {
 			BufferedImage glassImage = ImageIO.read(child);
-			// Get location data, date
 			glassImage = generateOverlay(glassImage, "34.025916,-118.281907",
-					"today");
+					"today", "12345");
 			File outputfile = new File(imageIndex + ".png");
 			ImageIO.write(glassImage, "png", outputfile);
 			imageIndex++;
